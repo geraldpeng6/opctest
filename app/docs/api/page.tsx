@@ -2,6 +2,8 @@ import Link from "next/link";
 
 const getExample = `curl -s http://localhost:3000/api/exams/level-1`;
 
+const getLevel2Example = `curl -s http://localhost:3000/api/exams/level-2`;
+
 const submitExample = `curl -X POST http://localhost:3000/api/submissions \\
   -H "content-type: application/json" \\
   -d '{
@@ -52,15 +54,26 @@ export default function ApiDocsPage() {
         </article>
 
         <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">POST /api/submissions</h2>
+          <h2 className="section-title">GET /api/exams/level-2</h2>
           <p className="muted">
-            Accepts an answer sheet and returns score, per-question correctness,
-            expected answers, and received answers.
+            Returns the harder Level 2 exam with more real-web comparison and
+            data-analysis questions.
           </p>
           <div className="code-panel">
-            <pre>{submitExample}</pre>
+            <pre>{getLevel2Example}</pre>
           </div>
         </article>
+      </section>
+
+      <section className="pixel-card pad-lg stack">
+        <h2 className="section-title">POST /api/submissions</h2>
+        <p className="muted">
+          Accepts an answer sheet and returns score, per-question correctness,
+          expected answers, and received answers.
+        </p>
+        <div className="code-panel">
+          <pre>{submitExample}</pre>
+        </div>
       </section>
 
       <section className="pixel-card pad-lg stack">

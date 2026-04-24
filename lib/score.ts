@@ -1,4 +1,4 @@
-import { getLevel1AnswerKey } from "@/lib/exams";
+import { getAnswerKeyByExamId } from "@/lib/exams";
 import { normalizeAnswer } from "@/lib/normalize";
 import type {
   SubmissionPayload,
@@ -9,18 +9,18 @@ import type {
 export class SubmissionValidationError extends Error {}
 
 export function scoreSubmission(payload: SubmissionPayload): SubmissionResponse {
-  const answerKey = getLevel1AnswerKey();
-
   if (!payload || typeof payload !== "object") {
     throw new SubmissionValidationError("Missing submission payload.");
   }
 
-  if (payload.exam_id !== answerKey.exam_id) {
-    throw new SubmissionValidationError("Unknown exam_id.");
-  }
-
   if (!payload.answers || typeof payload.answers !== "object") {
     throw new SubmissionValidationError("answers must be an object.");
+  }
+
+  const answerKey = getAnswerKeyByExamId(payload.exam_id);
+
+  if (!answerKey) {
+    throw new SubmissionValidationError("Unknown exam_id.");
   }
 
   const results: SubmissionResult[] = Object.entries(answerKey.answers).map(

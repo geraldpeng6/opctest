@@ -17,6 +17,16 @@ export function getOpenApiDocument() {
           },
         },
       },
+      "/api/exams/level-2": {
+        get: {
+          summary: "Fetch the public Level 2 exam.",
+          responses: {
+            "200": {
+              description: "Public exam payload without answer key.",
+            },
+          },
+        },
+      },
       "/api/submissions": {
         post: {
           summary: "Submit answers for grading.",

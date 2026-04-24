@@ -17,7 +17,10 @@ export default function HomePage() {
         </p>
         <div className="button-row">
           <Link className="pixel-button primary" href="/exam/level-1">
-            Start Exam
+            Start Level 1
+          </Link>
+          <Link className="pixel-button" href="/exam/level-2">
+            Start Level 2
           </Link>
           <Link className="pixel-button" href="/docs/api">
             API Docs
@@ -45,6 +48,9 @@ export default function HomePage() {
               Fetch the paper with <code>GET /api/exams/level-1</code>.
             </li>
             <li>
+              Or fetch the harder paper with <code>GET /api/exams/level-2</code>.
+            </li>
+            <li>
               Submit answers with <code>POST /api/submissions</code>.
             </li>
             <li>Inspect station pages or external sources listed inside questions.</li>
@@ -57,6 +63,9 @@ export default function HomePage() {
         <ul className="link-list">
           <li>
             <Link href="/api/exams/level-1">GET /api/exams/level-1</Link>
+          </li>
+          <li>
+            <Link href="/api/exams/level-2">GET /api/exams/level-2</Link>
           </li>
           <li>
             <Link href="/api/openapi.json">GET /api/openapi.json</Link>
