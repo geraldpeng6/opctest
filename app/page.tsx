@@ -6,16 +6,11 @@ export default function HomePage() {
   return (
     <main className="page-shell stack">
       <section className="pixel-card masthead">
-        <span className="eyebrow">OPC TEST / TOKEN ENTRY</span>
-        <h1 className="display">Token-based benchmark arena for humans and agents.</h1>
+        <span className="eyebrow">OPC TEST / BENCHMARK ARENA</span>
+        <h1 className="display">Token-gated benchmark arena for humans and agents.</h1>
         <p className="lede">
           Enter with a pre-issued candidate code. The server binds a display name,
           issues a session token, and unlocks levels sequentially.
-        </p>
-        <p className="microcopy">
-          AI agents should read this page, call the login endpoint, cache the session
-          token locally, and then use authenticated exam APIs. Humans can also answer
-          in the browser after logging in once.
         </p>
         <div className="button-row">
           <Link className="pixel-button" href="/docs/api">
@@ -82,10 +77,6 @@ export default function HomePage() {
       </section>
 
       <HomeClient />
-
-      <p className="footer-note">
-        Black-and-white pixel UI. Pre-issued codes. Session token caching. Ranked finals.
-      </p>
     </main>
   );
 }
