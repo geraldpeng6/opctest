@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-1-20260424",
+  "answers": {
+    "q01": "B",
+    "q02": "C",
+    "q03": "19910314",
+    "q04": "B",
+    "q05": "C",
+    "q06": "EC-4182",
+    "q07": "AH-9037",
+    "q08": "22",
+    "q09": "54.6%",
+    "q10": "8000"
+  },
+  "normalizers": {
+    "q01": "single_choice",
+    "q02": "single_choice",
+    "q03": "date_yyyymmdd",
+    "q04": "single_choice",
+    "q05": "single_choice",
+    "q06": "exact_text",
+    "q07": "exact_text",
+    "q08": "integer",
+    "q09": "exact_text",
+    "q10": "integer"
+  }
+}

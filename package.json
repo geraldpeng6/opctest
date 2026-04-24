@@ -1,0 +1,24 @@
+{
+  "name": "opctest",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --import tsx --test"
+  },
+  "dependencies": {
+    "@fontsource/press-start-2p": "5.2.7",
+    "next": "16.2.4",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "tsx": "4.20.6",
+    "typescript": "6.0.3"
+  }
+}

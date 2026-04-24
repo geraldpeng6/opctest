@@ -1,0 +1,82 @@
+{
+  "exam_id": "level-1-20260424",
+  "title": "Agent Benchmark Level 1",
+  "time_limit_sec": 600,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "single_choice",
+      "prompt": "Calculate 137 + 289.",
+      "options": ["416", "426", "436", "446"],
+      "answer_format_hint": "Choose A, B, C, or D."
+    },
+    {
+      "id": "q02",
+      "type": "single_choice",
+      "prompt": "Find the next number in the sequence: 2, 6, 12, 20, 30, ?",
+      "options": ["36", "40", "42", "48"],
+      "answer_format_hint": "Choose A, B, C, or D."
+    },
+    {
+      "id": "q03",
+      "type": "date_yyyymmdd",
+      "prompt": "Visit /materials/profile/rivera. Find the birthday and answer in YYYYMMDD format.",
+      "materials": ["/materials/profile/rivera"],
+      "answer_format_hint": "Use eight digits, for example 19910314."
+    },
+    {
+      "id": "q04",
+      "type": "single_choice",
+      "prompt": "Visit /materials/catalog/basic-tools. Which SKU has the lowest price?",
+      "options": ["T-100", "T-220", "T-315", "T-410"],
+      "materials": ["/materials/catalog/basic-tools"],
+      "answer_format_hint": "Choose A, B, C, or D."
+    },
+    {
+      "id": "q05",
+      "type": "single_choice",
+      "prompt": "Visit /materials/policy/shipping-v1. If weight is not above 2kg and order total is at least 100, which shipping method should be used?",
+      "options": ["STANDARD-S", "HEAVY-X", "EXPRESS-LITE", "PICKUP"],
+      "materials": ["/materials/policy/shipping-v1"],
+      "answer_format_hint": "Choose A, B, C, or D."
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "Visit /materials/projects/aurora, follow the owner to the related people page, and answer with the employee ID.",
+      "materials": ["/materials/projects/aurora", "/materials/people/liam-chen"],
+      "answer_format_hint": "Return the ID exactly as shown."
+    },
+    {
+      "id": "q07",
+      "type": "exact_text",
+      "prompt": "Use /search?q=blue+harbor, open the matching archive page, and answer with the archive code.",
+      "materials": ["/search?q=blue+harbor", "/materials/archive/blue-harbor-note"],
+      "answer_format_hint": "Return the archive code exactly as shown."
+    },
+    {
+      "id": "q08",
+      "type": "integer",
+      "prompt": "Visit /api/data/warehouse-a. What is the largest in_stock value in the returned JSON?",
+      "materials": ["/api/data/warehouse-a"],
+      "answer_format_hint": "Use a decimal integer."
+    },
+    {
+      "id": "q09",
+      "type": "exact_text",
+      "prompt": "Visit the OpenAI GPT-4.1 announcement page and find GPT-4.1's SWE-bench Verified score. Answer exactly as written on the page.",
+      "source_urls": ["https://openai.com/index/gpt-4-1/"],
+      "answer_format_hint": "Include the percent sign if the page includes it.",
+      "verified_at": "2026-04-24"
+    },
+    {
+      "id": "q10",
+      "type": "integer",
+      "prompt": "Visit the Python http.server documentation page and answer with the default listening port.",
+      "source_urls": ["https://docs.python.org/3/library/http.server.html"],
+      "answer_format_hint": "Use a decimal integer.",
+      "verified_at": "2026-04-24"
+    }
+  ]
+}
