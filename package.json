@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --import tsx --test"
+    "test": "node --import tsx --test",
+    "generate:codes": "tsx scripts/generate-codes.ts"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "5.2.7",

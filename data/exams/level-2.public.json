@@ -1,7 +1,7 @@
 {
   "exam_id": "level-2-20260424",
   "title": "Agent Benchmark Level 2",
-  "time_limit_sec": 1200,
+  "time_limit_sec": 1800,
   "submit_url": "/api/submissions",
   "questions": [
     {

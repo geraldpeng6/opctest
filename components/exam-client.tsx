@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { SESSION_STORAGE_KEY } from "@/lib/session";
 import type { PublicExam, Question, SubmissionResponse } from "@/lib/types";
 
 type AnswersState = Record<string, string>;
@@ -40,11 +41,92 @@ function questionTypeLabel(question: Question) {
   }
 }
 
-export function ExamClient({ exam }: { exam: PublicExam }) {
+function formatDuration(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
+  const [sessionToken, setSessionToken] = useState("");
+  const [exam, setExam] = useState<PublicExam | null>(null);
   const [answers, setAnswers] = useState<AnswersState>({});
   const [loading, setLoading] = useState(false);
+  const [loadingExam, setLoadingExam] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SubmissionResponse | null>(null);
+  const [nowMs, setNowMs] = useState(Date.now());
+
+  useEffect(() => {
+    setSessionToken(window.localStorage.getItem(SESSION_STORAGE_KEY) ?? "");
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadExam = async () => {
+      if (!sessionToken) {
+        setLoadingExam(false);
+        setError("Please log in from the homepage with your candidate code first.");
+        return;
+      }
+
+      setLoadingExam(true);
+      setError(null);
+      setResult(null);
+      setAnswers({});
+
+      try {
+        const response = await fetch(`/api/exams/${level}`, {
+          cache: "no-store",
+          headers: {
+            authorization: `Bearer ${sessionToken}`,
+          },
+        });
+        const body = (await response.json()) as
+          | PublicExam
+          | { error: string; result?: SubmissionResponse | null };
+
+        if (!response.ok) {
+          if (response.status === 409 && "result" in body && body.result) {
+            setResult(body.result);
+            setExam(null);
+            setError("error" in body ? body.error : null);
+            return;
+          }
+
+          setError("error" in body ? body.error : "Failed to load exam.");
+          return;
+        }
+
+        if (!cancelled) {
+          setExam(body as PublicExam);
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Network error while fetching the exam.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingExam(false);
+        }
+      }
+    };
+
+    void loadExam();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [level, sessionToken]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   const answeredCount = useMemo(
     () => Object.values(answers).filter((value) => value.trim().length > 0).length,
@@ -56,6 +138,11 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
   };
 
   const submit = async () => {
+    if (!exam?.attempt_id) {
+      setError("Exam attempt is not ready yet.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -64,9 +151,11 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
         method: "POST",
         headers: {
           "content-type": "application/json",
+          authorization: `Bearer ${sessionToken}`,
         },
         body: JSON.stringify({
           exam_id: exam.exam_id,
+          attempt_id: exam.attempt_id,
           answers,
         }),
       });
@@ -88,6 +177,58 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
     }
   };
 
+  const remainingSec = useMemo(() => {
+    if (!exam?.expires_at) {
+      return null;
+    }
+
+    const diff = Math.floor((new Date(exam.expires_at).getTime() - nowMs) / 1000);
+    return Math.max(0, diff);
+  }, [exam?.expires_at, nowMs]);
+
+  if (loadingExam) {
+    return (
+      <section className="stack">
+        <article className="pixel-card pad-lg stack">
+          <h2 className="section-title">Loading Exam</h2>
+          <p className="lede">Generating a randomized paper and starting the timer...</p>
+        </article>
+      </section>
+    );
+  }
+
+  if (!exam) {
+    return (
+      <section className="stack">
+        <article className="pixel-card pad-lg stack">
+          <h2 className="section-title">Exam Unavailable</h2>
+          <p className="lede">{error ?? "Unable to load the exam attempt."}</p>
+        </article>
+        {result ? (
+          <article className="pixel-card pad-lg stack">
+            <h2 className="section-title">Final Result</h2>
+            <div className="stat-grid">
+              <div className="stat">
+                <p className="stat-label">Status</p>
+                <p className="stat-value">{result.status}</p>
+              </div>
+              <div className="stat">
+                <p className="stat-label">Score</p>
+                <p className="stat-value">
+                  {result.score} / {result.total}
+                </p>
+              </div>
+              <div className="stat">
+                <p className="stat-label">Answer Time</p>
+                <p className="stat-value">{formatDuration(result.duration_sec)}</p>
+              </div>
+            </div>
+          </article>
+        ) : null}
+      </section>
+    );
+  }
+
   return (
     <section className="stack">
       <article className="pixel-card pad-lg stack">
@@ -105,7 +246,29 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
             <p className="stat-label">Submit URL</p>
             <p className="stat-value">{exam.submit_url}</p>
           </div>
+          <div className="stat">
+            <p className="stat-label">Attempt</p>
+            <p className="stat-value">{exam.attempt_id}</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Candidate</p>
+            <p className="stat-value">{exam.candidate_name ?? "Unknown"}</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Time Limit</p>
+            <p className="stat-value">{formatDuration(exam.time_limit_sec)}</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Time Left</p>
+            <p className="stat-value">
+              {remainingSec === null ? "--:--" : formatDuration(remainingSec)}
+            </p>
+          </div>
         </div>
+        <p className="microcopy">
+          Started at (UTC) {exam.started_at}. Expires at (UTC) {exam.expires_at}.
+          Questions and choice options are randomized for each fetched paper.
+        </p>
       </article>
 
       {exam.questions.map((question, index) => (
@@ -170,6 +333,10 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
           <h2 className="section-title">Score Report</h2>
           <div className="stat-grid">
             <div className="stat">
+              <p className="stat-label">Status</p>
+              <p className="stat-value">{result.status}</p>
+            </div>
+            <div className="stat">
               <p className="stat-label">Score</p>
               <p className="stat-value">
                 {result.score} / {result.total}
@@ -179,7 +346,15 @@ export function ExamClient({ exam }: { exam: PublicExam }) {
               <p className="stat-label">Accuracy</p>
               <p className="stat-value">{(result.accuracy * 100).toFixed(0)}%</p>
             </div>
+            <div className="stat">
+              <p className="stat-label">Answer Time</p>
+              <p className="stat-value">{formatDuration(result.duration_sec)}</p>
+            </div>
           </div>
+          <p className="microcopy">
+            Attempt {result.attempt_id}. Started at (UTC) {result.started_at}.
+            Submitted at (UTC) {result.submitted_at}. Record ID: {result.record_id}.
+          </p>
           <ul className="result-list">
             {result.results.map((entry) => (
               <li

@@ -1,13 +1,27 @@
 import Link from "next/link";
 
-const getExample = `curl -s http://localhost:3000/api/exams/level-1`;
+const loginExample = `curl -X POST http://localhost:3000/api/auth/login \\
+  -H "content-type: application/json" \\
+  -d '{
+    "code": "elephant-xxxxxxxxxxxxxxxxxxxx",
+    "name": "FirstTimeOnly"
+  }'`;
 
-const getLevel2Example = `curl -s http://localhost:3000/api/exams/level-2`;
+const meExample = `curl -s http://localhost:3000/api/auth/me \\
+  -H "authorization: Bearer <session_token>"`;
+
+const getExample = `curl -s http://localhost:3000/api/exams/level-1 \\
+  -H "authorization: Bearer <session_token>"`;
+
+const getLevel2Example = `curl -s http://localhost:3000/api/exams/level-2 \\
+  -H "authorization: Bearer <session_token>"`;
 
 const submitExample = `curl -X POST http://localhost:3000/api/submissions \\
   -H "content-type: application/json" \\
+  -H "authorization: Bearer <session_token>" \\
   -d '{
     "exam_id": "level-1-20260424",
+    "attempt_id": "replace-with-attempt-id-from-fetch",
     "answers": {
       "q01": "B",
       "q02": "C"
@@ -36,17 +50,42 @@ export default function ApiDocsPage() {
           <Link className="pixel-button primary" href="/api/openapi.json">
             OpenAPI JSON
           </Link>
-          <Link className="pixel-button" href="/exam/level-1">
-            Human Exam Page
+          <Link className="pixel-button" href="/">
+            Home
           </Link>
         </div>
       </section>
 
       <section className="grid-2">
         <article className="pixel-card pad-lg stack">
+          <h2 className="section-title">POST /api/auth/login</h2>
+          <p className="muted">
+            Activates a candidate code and returns a session token. If the code has
+            no bound display name yet, a unique name is required.
+          </p>
+          <div className="code-panel">
+            <pre>{loginExample}</pre>
+          </div>
+        </article>
+
+        <article className="pixel-card pad-lg stack">
+          <h2 className="section-title">GET /api/auth/me</h2>
+          <p className="muted">
+            Validates the cached session token and returns the candidate profile,
+            unlocked levels, passed levels, and finalized levels.
+          </p>
+          <div className="code-panel">
+            <pre>{meExample}</pre>
+          </div>
+        </article>
+      </section>
+
+      <section className="grid-2">
+        <article className="pixel-card pad-lg stack">
           <h2 className="section-title">GET /api/exams/level-1</h2>
           <p className="muted">
-            Returns the public exam payload without standard answers.
+            Returns the authenticated candidate's active Level 1 paper, or creates
+            one if the level is unlocked and not finalized.
           </p>
           <div className="code-panel">
             <pre>{getExample}</pre>
@@ -56,8 +95,8 @@ export default function ApiDocsPage() {
         <article className="pixel-card pad-lg stack">
           <h2 className="section-title">GET /api/exams/level-2</h2>
           <p className="muted">
-            Returns the harder Level 2 exam with more real-web comparison and
-            data-analysis questions.
+            Returns Level 2 only when the candidate has both permission and a pass
+            on the previous level.
           </p>
           <div className="code-panel">
             <pre>{getLevel2Example}</pre>
@@ -68,12 +107,18 @@ export default function ApiDocsPage() {
       <section className="pixel-card pad-lg stack">
         <h2 className="section-title">POST /api/submissions</h2>
         <p className="muted">
-          Accepts an answer sheet and returns score, per-question correctness,
-          expected answers, and received answers.
+          Accepts a final answer sheet for a specific authenticated attempt and
+          returns score, status, timing, and the result breakdown.
         </p>
         <div className="code-panel">
           <pre>{submitExample}</pre>
         </div>
+        <p className="microcopy">
+          Each fetched exam gets a unique <code>attempt_id</code>. The timer starts
+          when that attempt is created. The default maximum duration is 30 minutes.
+          Late submissions are marked absent with a score of 0. Every submission is
+          recorded on the server. Each candidate can finalize each level only once.
+        </p>
       </section>
 
       <section className="pixel-card pad-lg stack">

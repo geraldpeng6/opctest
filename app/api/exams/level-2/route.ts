@@ -1,7 +1,25 @@
 import { NextResponse } from "next/server";
 
-import { getLevel2PublicExam } from "@/lib/exams";
+import { AuthorizationError, ensureLevelAccess } from "@/lib/auth";
+import { createOrLoadAttemptForCandidate, LevelAlreadyFinalizedError } from "@/lib/attempts";
+import { requireBearerToken } from "@/lib/request-auth";
 
-export function GET() {
-  return NextResponse.json(getLevel2PublicExam());
+export function GET(request: Request) {
+  try {
+    const token = requireBearerToken(request);
+    const candidate = ensureLevelAccess(token, "level-2");
+    return NextResponse.json(createOrLoadAttemptForCandidate("level-2", candidate));
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
+    if (error instanceof LevelAlreadyFinalizedError) {
+      return NextResponse.json(
+        { error: error.message, result: error.result ?? null },
+        { status: 409 },
+      );
+    }
+
+    return NextResponse.json({ error: "Unexpected exam error." }, { status: 500 });
+  }
 }

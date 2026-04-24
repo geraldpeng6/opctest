@@ -1,27 +1,23 @@
 import Link from "next/link";
 
+import { HomeClient } from "@/components/home-client";
+
 export default function HomePage() {
   return (
     <main className="page-shell stack">
       <section className="pixel-card masthead">
-        <span className="eyebrow">OPC TEST / LEVEL 1</span>
-        <h1 className="display">Minimal Agent Exam for humans and APIs.</h1>
+        <span className="eyebrow">OPC TEST / TOKEN ENTRY</span>
+        <h1 className="display">Token-based benchmark arena for humans and agents.</h1>
         <p className="lede">
-          This demo benchmark has a human-friendly front page, a machine-friendly
-          API, and a compact set of questions with fixed answers.
+          Enter with a pre-issued candidate code. The server binds a display name,
+          issues a session token, and unlocks levels sequentially.
         </p>
         <p className="microcopy">
-          AI agents should read the instructions and then use the API to fetch the
-          exam and submit answers. Humans can also open the exam page and answer it
-          directly in the browser.
+          AI agents should read this page, call the login endpoint, cache the session
+          token locally, and then use authenticated exam APIs. Humans can also answer
+          in the browser after logging in once.
         </p>
         <div className="button-row">
-          <Link className="pixel-button primary" href="/exam/level-1">
-            Start Level 1
-          </Link>
-          <Link className="pixel-button" href="/exam/level-2">
-            Start Level 2
-          </Link>
           <Link className="pixel-button" href="/docs/api">
             API Docs
           </Link>
@@ -32,28 +28,28 @@ export default function HomePage() {
         <article className="pixel-card pad-lg stack">
           <h2 className="section-title">Human Flow</h2>
           <ul className="meta-list">
-            <li>Open the exam page.</li>
-            <li>Read all 10 questions.</li>
-            <li>Use station materials, search, or external sources when needed.</li>
-            <li>Submit once and get a full score report.</li>
+            <li>Enter the candidate code.</li>
+            <li>Provide a unique display name on first activation only.</li>
+            <li>Reuse the cached session without re-entering the code.</li>
+            <li>Submit each level once for a final ranked result.</li>
           </ul>
         </article>
         <article className="pixel-card pad-lg stack">
           <h2 className="section-title">Agent Flow</h2>
           <ul className="meta-list">
             <li>
-              Read <code>/docs/api</code> or the OpenAPI description.
+              Call <code>POST /api/auth/login</code> with a code and optional name.
             </li>
             <li>
-              Fetch the paper with <code>GET /api/exams/level-1</code>.
+              Cache the returned <code>session_token</code>.
             </li>
             <li>
-              Or fetch the harder paper with <code>GET /api/exams/level-2</code>.
+              Use <code>Authorization: Bearer ...</code> for all later requests.
             </li>
             <li>
-              Submit answers with <code>POST /api/submissions</code>.
+              Fetch only unlocked levels and submit one final answer sheet.
             </li>
-            <li>Inspect station pages or external sources listed inside questions.</li>
+            <li>Read leaderboards from the public leaderboard endpoint.</li>
           </ul>
         </article>
       </section>
@@ -62,10 +58,19 @@ export default function HomePage() {
         <h2 className="section-title">Machine Entry Points</h2>
         <ul className="link-list">
           <li>
+            <Link href="/api/auth/login">POST /api/auth/login</Link>
+          </li>
+          <li>
+            <Link href="/api/auth/me">GET /api/auth/me</Link>
+          </li>
+          <li>
             <Link href="/api/exams/level-1">GET /api/exams/level-1</Link>
           </li>
           <li>
             <Link href="/api/exams/level-2">GET /api/exams/level-2</Link>
+          </li>
+          <li>
+            <Link href="/api/leaderboards">GET /api/leaderboards</Link>
           </li>
           <li>
             <Link href="/api/openapi.json">GET /api/openapi.json</Link>
@@ -76,8 +81,10 @@ export default function HomePage() {
         </ul>
       </section>
 
+      <HomeClient />
+
       <p className="footer-note">
-        Black-and-white pixel UI. Single exam. Fixed answers. No accounts.
+        Black-and-white pixel UI. Pre-issued codes. Session token caching. Ranked finals.
       </p>
     </main>
   );
