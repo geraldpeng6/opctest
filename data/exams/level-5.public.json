@@ -1,0 +1,78 @@
+{
+  "exam_id": "level-5-20260707",
+  "title": "第五关：财务风控",
+  "time_limit_sec": 3600,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "integer",
+      "prompt": "读取收入确认政策和二季度订单表。按政策可确认收入的金额合计是多少万元？",
+      "materials": ["/materials/finance/revenue-policy", "/materials/finance/q2-orders"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q02",
+      "type": "integer",
+      "prompt": "读取收入确认政策和二季度订单表。已收款、未退款但暂不能确认收入的金额合计是多少万元？",
+      "materials": ["/materials/finance/revenue-policy", "/materials/finance/q2-orders"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q03",
+      "type": "integer",
+      "prompt": "读取交易对手敞口表。评级为 BBB- 或更低且敞口大于 50 的交易对手有几个？",
+      "materials": ["/materials/finance/counterparty-exposure"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q04",
+      "type": "integer",
+      "prompt": "读取流动性摘要。现金 320、30 天应收 180、已承诺流出 410、最低缓冲 60，扣除缓冲后的盈余是多少万元？",
+      "materials": ["/materials/finance/liquidity-brief"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q05",
+      "type": "integer",
+      "prompt": "读取投资组合压力公式。按公式计算压力损失合计是多少万元？",
+      "materials": ["/materials/finance/portfolio-stress"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "读取外汇套保说明。120 万欧元发票中 80 万按 7.72 锁汇，其余按 7.91 即期折算，人民币合计是多少万元？",
+      "materials": ["/materials/finance/fx-hedge-note"],
+      "answer_format_hint": "保留一位小数。"
+    },
+    {
+      "id": "q07",
+      "type": "exact_text",
+      "prompt": "读取债务契约说明。净债务 900、调整后 EBITDA 260，杠杆阈值 3.5 倍，本期是否通过？",
+      "materials": ["/materials/finance/covenant-note"],
+      "answer_format_hint": "回答“通过”或“不通过”。"
+    },
+    {
+      "id": "q08",
+      "type": "integer",
+      "prompt": "读取审计样本。出现重复的发票编号共有几个？",
+      "materials": ["/materials/finance/audit-sample"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q09",
+      "type": "integer",
+      "prompt": "读取留存表。第一季度队列从第 3 月到第 6 月留存率下降了多少个百分点？",
+      "materials": ["/materials/finance/cohort-retention"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q10",
+      "type": "exact_text",
+      "prompt": "读取预期损失表。按 PD × LGD × EAD 逐项求和，预期损失合计是多少万元？",
+      "materials": ["/materials/finance/expected-loss"],
+      "answer_format_hint": "保留一位小数。"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "case_id": "CASE-113",
+      "order_status": "已送达",
+      "delivered_at": "2026-04-10T09:30:00Z",
+      "reported_at": "2026-04-20T10:00:00Z",
+      "damage_grade": 2,
+      "evidence_complete": true,
+      "custom_item": false,
+      "prior_refund_count": 1,
+      "order_total": 320
+    },
+    {
+      "case_id": "CASE-118",
+      "order_status": "已送达",
+      "delivered_at": "2026-04-13T08:00:00Z",
+      "reported_at": "2026-04-19T08:30:00Z",
+      "damage_grade": 3,
+      "evidence_complete": true,
+      "custom_item": false,
+      "prior_refund_count": 0,
+      "order_total": 280
+    },
+    {
+      "case_id": "CASE-121",
+      "order_status": "已送达",
+      "delivered_at": "2026-03-28T11:00:00Z",
+      "reported_at": "2026-04-17T12:00:00Z",
+      "damage_grade": 2,
+      "evidence_complete": true,
+      "custom_item": false,
+      "prior_refund_count": 0,
+      "order_total": 190
+    },
+    {
+      "case_id": "CASE-127",
+      "order_status": "处理中",
+      "delivered_at": "",
+      "reported_at": "2026-04-18T09:00:00Z",
+      "damage_grade": 3,
+      "evidence_complete": true,
+      "custom_item": false,
+      "prior_refund_count": 0,
+      "order_total": 210
+    },
+    {
+      "case_id": "CASE-133",
+      "order_status": "已送达",
+      "delivered_at": "2026-04-15T16:00:00Z",
+      "reported_at": "2026-04-17T16:30:00Z",
+      "damage_grade": 1,
+      "evidence_complete": true,
+      "custom_item": false,
+      "prior_refund_count": 0,
+      "order_total": 140
+    }
+  ]
+}

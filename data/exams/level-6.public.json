@@ -1,0 +1,78 @@
+{
+  "exam_id": "level-6-20260707",
+  "title": "第六关：科学研究",
+  "time_limit_sec": 4500,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_text",
+      "prompt": "读取酶动力学摘要。Vmax 基本不变而 Km 升高，最符合哪种抑制类型？",
+      "materials": ["/materials/research/enzyme-kinetics"],
+      "answer_format_hint": "按材料中的类型名作答。"
+    },
+    {
+      "id": "q02",
+      "type": "integer",
+      "prompt": "读取试验统计摘要。处理组事件率 16%，对照组事件率 28%，绝对风险降低是多少个百分点？",
+      "materials": ["/materials/research/trial-statistics"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q03",
+      "type": "integer",
+      "prompt": "读取衰变记录。计数从 1000 降到 250 用了 10 小时，半衰期是多少小时？",
+      "materials": ["/materials/research/decay-record"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q04",
+      "type": "integer",
+      "prompt": "读取遗传学记录。AaBb 与 aabb 杂交，独立分离，400 个后代理论上双隐性个体有多少个？",
+      "materials": ["/materials/research/genetics-cross"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q05",
+      "type": "integer",
+      "prompt": "读取测定验证表。150 个阴性样本中有 3 个假阳性，特异性按百分数取整数是多少？",
+      "materials": ["/materials/research/assay-validation"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "读取质谱判读卡。基峰 91 且分子离子峰 106 对应哪个候选物？",
+      "materials": ["/materials/research/spectrum-card"],
+      "answer_format_hint": "按候选物名称作答。"
+    },
+    {
+      "id": "q07",
+      "type": "exact_text",
+      "prompt": "读取生态样地表。丰富度评分 = 本土种数 - 2 × 入侵种数，评分最高的是哪个样地？",
+      "materials": ["/materials/research/ecology-plots"],
+      "answer_format_hint": "按样地名称作答。"
+    },
+    {
+      "id": "q08",
+      "type": "integer",
+      "prompt": "读取材料热处理表。在抗拉强度至少 800 且延伸率至少 12 的条件下，满足要求的最低退火温度是多少摄氏度？",
+      "materials": ["/materials/research/annealing-table"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q09",
+      "type": "exact_text",
+      "prompt": "读取多重比较说明。Bonferroni 校正后显著的比较编号是什么？",
+      "materials": ["/materials/research/multiple-comparison"],
+      "answer_format_hint": "按比较编号作答。"
+    },
+    {
+      "id": "q10",
+      "type": "integer",
+      "prompt": "读取样本排除规则。溶血指数大于 2 或储存超过 48 小时的样本应排除，共有几个样本被排除？",
+      "materials": ["/materials/research/sample-exclusion"],
+      "answer_format_hint": "使用十进制整数。"
+    }
+  ]
+}

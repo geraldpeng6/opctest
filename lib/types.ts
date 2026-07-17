@@ -1,10 +1,25 @@
-export type ExamLevel = "level-1" | "level-2";
+export type ExamLevel =
+  | "level-1"
+  | "level-2"
+  | "level-3"
+  | "level-4"
+  | "level-5"
+  | "level-6"
+  | "level-7"
+  | "level-8"
+  | "level-9"
+  | "level-10";
 
 export type QuestionType =
   | "single_choice"
+  | "multiple_choice"
+  | "ordered_list"
   | "exact_text"
   | "integer"
-  | "date_yyyymmdd";
+  | "decimal"
+  | "date_yyyymmdd"
+  | "json_object"
+  | "code_patch";
 
 export interface Question {
   id: string;
@@ -67,10 +82,6 @@ export interface SubmissionResponse {
 
 export interface CandidateRecord {
   candidate_id: string;
-  code_salt: string;
-  code_hash: string;
-  animal_prefix: string;
-  code_length: number;
   max_level: number;
   name: string | null;
   created_at: string;
@@ -98,8 +109,7 @@ export interface CandidateSummary {
 }
 
 export interface AuthLoginPayload {
-  code: string;
-  name?: string;
+  name: string;
 }
 
 export interface AuthLoginResponse {

@@ -1,0 +1,78 @@
+{
+  "exam_id": "level-4-20260707",
+  "title": "第四关：工程诊断",
+  "time_limit_sec": 3600,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "exact_text",
+      "prompt": "读取事故概览。发布后 p95 延迟最高的服务是哪一个？",
+      "materials": ["/materials/engineering/incident-871"],
+      "answer_format_hint": "按材料中的服务名作答。"
+    },
+    {
+      "id": "q02",
+      "type": "exact_text",
+      "prompt": "读取配置差异。最可能造成库存缓存陈旧的配置项是哪一个？",
+      "materials": ["/materials/engineering/config-diff-871"],
+      "answer_format_hint": "按配置项原名作答。"
+    },
+    {
+      "id": "q03",
+      "type": "exact_text",
+      "prompt": "读取链路样本。导致三次重试后仍失败的根因代码是什么？",
+      "materials": ["/materials/engineering/trace-sample-871"],
+      "answer_format_hint": "按材料中的根因代码作答。"
+    },
+    {
+      "id": "q04",
+      "type": "exact_text",
+      "prompt": "读取迁移评审。缺失的索引名称是什么？",
+      "materials": ["/materials/engineering/schema-review-871"],
+      "answer_format_hint": "按材料中的索引名作答。"
+    },
+    {
+      "id": "q05",
+      "type": "exact_text",
+      "prompt": "读取队列运行手册。当待处理数超过 5000 且最老消息超过 600 秒时，应执行哪个动作代码？",
+      "materials": ["/materials/engineering/queue-runbook"],
+      "answer_format_hint": "按手册动作代码作答。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "读取接口契约审查。唯一的破坏性字段变更是哪一个字段？",
+      "materials": ["/materials/engineering/api-contract-v3"],
+      "answer_format_hint": "按字段名作答。"
+    },
+    {
+      "id": "q07",
+      "type": "exact_text",
+      "prompt": "读取发布清单。当前唯一阻塞发布的检查项是什么？",
+      "materials": ["/materials/engineering/release-checklist"],
+      "answer_format_hint": "按检查项名称作答。"
+    },
+    {
+      "id": "q08",
+      "type": "integer",
+      "prompt": "读取安全审计摘录。外部地址触发的被拒绝管理员操作共有几次？",
+      "materials": ["/materials/engineering/security-audit-sample"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q09",
+      "type": "integer",
+      "prompt": "读取 SLO 报告。错误预算为 43 分钟，已消耗 37 分钟，剩余多少分钟？",
+      "materials": ["/materials/engineering/slo-report"],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q10",
+      "type": "exact_text",
+      "prompt": "读取缓存迁移说明。若异步预热延迟超过 300 秒且直写关闭，应采用哪个处置模式？",
+      "materials": ["/materials/engineering/cache-migration-note"],
+      "answer_format_hint": "按材料中的处置模式作答。"
+    }
+  ]
+}

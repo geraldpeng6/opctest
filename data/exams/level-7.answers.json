@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-7-20260707",
+  "answers": {
+    "q01": "C",
+    "q02": "117",
+    "q03": "A,C",
+    "q04": "10",
+    "q05": "B,C,A,D",
+    "q06": "画像,排序",
+    "q07": "5",
+    "q08": "{\"path\":\"入口>画像>排序>展示\",\"latency\":22}",
+    "q09": "20260313",
+    "q10": "A,B,C"
+  },
+  "normalizers": {
+    "q01": "single_choice",
+    "q02": "integer",
+    "q03": "multiple_choice",
+    "q04": "decimal",
+    "q05": "ordered_list",
+    "q06": "ordered_list",
+    "q07": "integer",
+    "q08": "json_object",
+    "q09": "date_yyyymmdd",
+    "q10": "multiple_choice"
+  }
+}

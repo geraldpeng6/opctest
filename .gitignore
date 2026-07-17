@@ -4,3 +4,8 @@ npm-debug.log*
 pnpm-debug.log*
 coverage
 .runtime
+tsconfig.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example

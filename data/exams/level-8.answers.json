@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-8-20260707",
+  "answers": {
+    "q01": "C",
+    "q02": "○△□□",
+    "q03": "B,D,A",
+    "q04": "A,C",
+    "q05": "20",
+    "q06": "蓝",
+    "q07": "{\"shape\":\"triangle\",\"fill\":\"solid\",\"color\":\"black\"}",
+    "q08": "R,R,D,D,R",
+    "q09": "A",
+    "q10": "A,C"
+  },
+  "normalizers": {
+    "q01": "single_choice",
+    "q02": "exact_text",
+    "q03": "ordered_list",
+    "q04": "multiple_choice",
+    "q05": "integer",
+    "q06": "exact_text",
+    "q07": "json_object",
+    "q08": "ordered_list",
+    "q09": "single_choice",
+    "q10": "multiple_choice"
+  }
+}

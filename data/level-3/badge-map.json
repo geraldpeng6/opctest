@@ -1,0 +1,14 @@
+{
+  "badges": [
+    { "badge_id": "M-104", "tag": "推进" },
+    { "badge_id": "M-118", "tag": "推进" },
+    { "badge_id": "M-201", "tag": "制导" },
+    { "badge_id": "M-233", "tag": "推进" },
+    { "badge_id": "M-240", "tag": "推进" },
+    { "badge_id": "M-305", "tag": "推进" },
+    { "badge_id": "M-412", "tag": "通信" },
+    { "badge_id": "M-509", "tag": "推进" },
+    { "badge_id": "M-512", "tag": "推进" },
+    { "badge_id": "M-611", "tag": "生命保障" }
+  ]
+}

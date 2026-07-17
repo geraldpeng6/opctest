@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-10-20260707",
+  "answers": {
+    "q01": "B",
+    "q02": "{\"tool\":\"order.lookup\",\"order_id\":\"O-8841\"}",
+    "q03": "B,D,A,C",
+    "q04": "A,D",
+    "q05": "B",
+    "q06": "{\"metric\":\"macro_f1\",\"value\":0.742}",
+    "q07": "A,D",
+    "q08": "B,A,D,C",
+    "q09": "20260418",
+    "q10": "PLAN-C"
+  },
+  "normalizers": {
+    "q01": "single_choice",
+    "q02": "json_object",
+    "q03": "ordered_list",
+    "q04": "multiple_choice",
+    "q05": "single_choice",
+    "q06": "json_object",
+    "q07": "multiple_choice",
+    "q08": "ordered_list",
+    "q09": "date_yyyymmdd",
+    "q10": "code_patch"
+  }
+}

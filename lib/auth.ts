@@ -5,13 +5,9 @@ import { randomUUID } from "node:crypto";
 import { getFinalSubmission, didPassLevel } from "@/lib/results";
 import { LEVELS, previousLevel, unlockedLevelsFromMaxLevel } from "@/lib/levels";
 import {
-  createSalt,
   createSessionToken,
-  hashCode,
   hashSessionToken,
-  normalizeCode,
-  normalizeDisplayName,
-  verifyCode,
+  normalizeNickname,
 } from "@/lib/security";
 import { ensureRuntimeDir, runtimePath } from "@/lib/runtime-paths";
 import type {
@@ -67,42 +63,25 @@ export function saveRegistry(registry: CandidateRegistry) {
   writeFileSync(filePath, JSON.stringify(registry, null, 2));
 }
 
-export function createCandidateRecord(code: string, maxLevel: number, nowIso: string) {
-  const normalizedCode = normalizeCode(code);
-  const [animalPrefix] = normalizedCode.split("-");
-  const salt = createSalt();
-
+export function createCandidateRecord(name: string, maxLevel: number, nowIso: string) {
   return {
     candidate_id: randomUUID(),
-    code_salt: salt,
-    code_hash: hashCode(normalizedCode, salt),
-    animal_prefix: animalPrefix || "animal",
-    code_length: normalizedCode.length,
     max_level: maxLevel,
-    name: null,
+    name,
     created_at: nowIso,
   } satisfies CandidateRecord;
-}
-
-function findCandidateByCode(code: string, registry: CandidateRegistry) {
-  const normalizedCode = normalizeCode(code);
-  return (
-    registry.candidates.find((candidate) =>
-      verifyCode(normalizedCode, candidate.code_salt, candidate.code_hash),
-    ) ?? null
-  );
 }
 
 export function getCandidateById(candidateId: string) {
   return loadRegistry().candidates.find((candidate) => candidate.candidate_id === candidateId) ?? null;
 }
 
-function isDuplicateName(name: string, registry: CandidateRegistry, candidateId: string) {
-  return registry.candidates.some(
-    (candidate) =>
-      candidate.candidate_id !== candidateId &&
-      candidate.name !== null &&
-      candidate.name.toLowerCase() === name.toLowerCase(),
+function findCandidateByName(name: string, registry: CandidateRegistry) {
+  const normalizedName = name.toLowerCase();
+  return (
+    registry.candidates.find(
+      (candidate) => candidate.name?.toLowerCase() === normalizedName,
+    ) ?? null
   );
 }
 
@@ -144,30 +123,21 @@ function createStoredSession(candidateId: string, nowMs: number) {
   return token;
 }
 
-export function loginWithCode(
+export function loginWithName(
   payload: AuthLoginPayload,
   nowMs = Date.now(),
 ): AuthLoginResponse {
-  if (!payload.code || typeof payload.code !== "string") {
-    throw new AuthError("code is required.");
+  const nickname = normalizeNickname(payload.name ?? "");
+  if (!nickname) {
+    throw new AuthError("必须填写昵称。");
   }
 
   const registry = loadRegistry();
-  const candidate = findCandidateByCode(payload.code, registry);
+  let candidate = findCandidateByName(nickname, registry);
 
   if (!candidate) {
-    throw new AuthError("Invalid code.");
-  }
-
-  if (!candidate.name) {
-    const proposedName = normalizeDisplayName(payload.name ?? "");
-    if (!proposedName) {
-      throw new AuthError("Name is required for first-time activation.");
-    }
-    if (isDuplicateName(proposedName, registry, candidate.candidate_id)) {
-      throw new AuthError("This name is already taken. Please choose another one.");
-    }
-    candidate.name = proposedName;
+    candidate = createCandidateRecord(nickname, LEVELS.length, new Date(nowMs).toISOString());
+    registry.candidates.push(candidate);
     saveRegistry(registry);
   }
 
@@ -198,12 +168,12 @@ function loadSessionByToken(token: string) {
 export function getCandidateSummaryFromToken(token: string) {
   const session = loadSessionByToken(token);
   if (!session) {
-    throw new AuthorizationError("Invalid or expired session token.");
+    throw new AuthorizationError("会话令牌无效或已过期。");
   }
 
   const candidate = getCandidateById(session.candidate_id);
   if (!candidate) {
-    throw new AuthorizationError("Unknown candidate session.");
+    throw new AuthorizationError("找不到该考生会话。");
   }
 
   return buildCandidateSummary(candidate);
@@ -218,7 +188,7 @@ export function getAuthMeResponse(token: string): AuthMeResponse {
 export function ensureLevelAccess(token: string, level: ExamLevel) {
   const candidate = getCandidateSummaryFromToken(token);
   if (!candidate.unlocked_levels.includes(level)) {
-    throw new AuthorizationError(`Access to ${level} is not unlocked for this candidate.`);
+    throw new AuthorizationError(`该考生尚未解锁 ${level}。`);
   }
   return candidate;
 }

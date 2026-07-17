@@ -1,0 +1,78 @@
+{
+  "exam_id": "level-9-20260707",
+  "title": "第九关：代码智能体",
+  "time_limit_sec": 7200,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "code_patch",
+      "prompt": "读取解析器缺陷报告。哪个补丁能同时通过现有测试和新增回归测试？",
+      "materials": ["/materials/code/parser-bug"],
+      "answer_format_hint": "填写补丁编号，例如 PATCH-A。"
+    },
+    {
+      "id": "q02",
+      "type": "multiple_choice",
+      "prompt": "读取解析器缺陷报告。修复前必然失败的测试有哪些？",
+      "materials": ["/materials/code/parser-bug"],
+      "options": ["空字符串返回空数组", "连续逗号保留空字段", "带空格字段会 trim", "普通 CSV 三列解析"]
+    },
+    {
+      "id": "q03",
+      "type": "ordered_list",
+      "prompt": "读取调试轨迹。按最小风险排序下一步操作。",
+      "materials": ["/materials/code/debug-trace"],
+      "answer_format_hint": "输入步骤编号。"
+    },
+    {
+      "id": "q04",
+      "type": "single_choice",
+      "prompt": "读取浏览器任务日志。导致提交按钮不可点击的直接原因是什么？",
+      "materials": ["/materials/code/browser-task"],
+      "options": ["按钮被遮罩层覆盖", "请求返回 500", "输入框为空", "路由不存在"]
+    },
+    {
+      "id": "q05",
+      "type": "integer",
+      "prompt": "读取测试矩阵。应用推荐补丁后，预期通过的测试数是多少？",
+      "materials": ["/materials/code/test-matrix"],
+      "answer_format_hint": "只填整数。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "读取依赖冲突说明。应该升级哪个包？",
+      "materials": ["/materials/code/dependency-conflict"],
+      "answer_format_hint": "填写包名。"
+    },
+    {
+      "id": "q07",
+      "type": "multiple_choice",
+      "prompt": "读取变更清单。哪些文件属于本次最小修复范围？",
+      "materials": ["/materials/code/change-scope"],
+      "options": ["lib/parser.ts", "tests/parser.test.ts", "app/globals.css", "README.md"]
+    },
+    {
+      "id": "q08",
+      "type": "code_patch",
+      "prompt": "读取可访问性回归。哪个补丁修复问题且不改变视觉布局？",
+      "materials": ["/materials/code/a11y-regression"],
+      "answer_format_hint": "填写补丁编号。"
+    },
+    {
+      "id": "q09",
+      "type": "json_object",
+      "prompt": "读取 API 契约。构造最小合法请求体。",
+      "materials": ["/materials/code/api-contract"],
+      "answer_format_hint": "输出 JSON 对象。"
+    },
+    {
+      "id": "q10",
+      "type": "ordered_list",
+      "prompt": "读取发布手册。按顺序给出最小发布前检查链。",
+      "materials": ["/materials/code/release-runbook"],
+      "answer_format_hint": "输入步骤编号。"
+    }
+  ]
+}

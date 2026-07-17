@@ -1,110 +1,110 @@
 {
   "exam_id": "level-2-20260424",
-  "title": "Agent Benchmark Level 2",
+  "title": "第二关：公开信息",
   "time_limit_sec": 1800,
   "submit_url": "/api/submissions",
   "questions": [
     {
       "id": "q01",
       "type": "exact_text",
-      "prompt": "Visit the OpenAI GPT-5 for developers page and the GPT-4.1 page. Compare the Scale MultiChallenge (o3-mini grader) scores for GPT-5(high) and GPT-4.1. Answer the absolute difference in percentage points using one decimal place.",
+      "prompt": "访问 OpenAI GPT-5 for developers 页面和 GPT-4.1 页面。比较 GPT-5(high) 与 GPT-4.1 在 Scale MultiChallenge（o3-mini grader）上的分数，并用一位小数回答百分点绝对差。",
       "source_urls": [
         "https://openai.com/index/introducing-gpt-5-for-developers/",
         "https://openai.com/index/gpt-4-1/"
       ],
-      "answer_format_hint": "Return only the number, for example 23.4.",
+      "answer_format_hint": "只返回数字，例如 23.4。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q02",
       "type": "exact_text",
-      "prompt": "Visit the OpenAI GPT-5.1 for developers page and the GPT-5 for developers page. Compare the Tau²-bench telecom scores for GPT-5.1(high) and GPT-5(high). Answer the absolute difference in percentage points using one decimal place.",
+      "prompt": "访问 OpenAI GPT-5.1 for developers 页面和 GPT-5 for developers 页面。比较 GPT-5.1(high) 与 GPT-5(high) 在 Tau²-bench telecom 上的分数，并用一位小数回答百分点绝对差。",
       "source_urls": [
         "https://openai.com/index/gpt-5-1-for-developers/",
         "https://openai.com/index/introducing-gpt-5-for-developers/"
       ],
-      "answer_format_hint": "Return only the number, for example 1.1.",
+      "answer_format_hint": "只返回数字，例如 1.1。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q03",
       "type": "integer",
-      "prompt": "Visit the Python http.server documentation page. The --directory option was added in version 3.7 and --protocol was added in version 3.11. How many minor versions apart are they?",
+      "prompt": "访问 Python http.server 文档页。--directory 选项加入于 3.7，--protocol 选项加入于 3.11。两者相隔多少个次版本？",
       "source_urls": [
         "https://docs.python.org/3/library/http.server.html"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q04",
       "type": "integer",
-      "prompt": "Visit the DeepSeek Models & Pricing page and the Qwen-Long page. DeepSeek-V4-Pro has a 1M context length, while qwen-long has a 10,000,000-token context length. How many times larger is qwen-long's context window?",
+      "prompt": "访问 DeepSeek 模型与价格页和 Qwen-Long 页面。DeepSeek-V4-Pro 的上下文长度为 1M，而 qwen-long 的上下文长度为 10,000,000 个词元。qwen-long 的上下文窗口是前者的多少倍？",
       "source_urls": [
         "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
         "https://help.aliyun.com/zh/model-studio/long-context-qwen-long"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q05",
       "type": "integer",
-      "prompt": "Visit the DeepSeek Models & Pricing page. For DeepSeek-V4-Pro on the Chinese pricing page, compare the output price per million tokens with the cache-hit input price per million tokens. How many times larger is the output price?",
+      "prompt": "访问 DeepSeek 模型与价格页。对中文价格页上的 DeepSeek-V4-Pro，比较每百万词元输出价格与缓存命中输入价格。输出价格是后者的多少倍？",
       "source_urls": [
         "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q06",
       "type": "integer",
-      "prompt": "Visit the Qwen-Long page. Subtract the model's maximum output from its context length. Answer the exact integer difference in tokens.",
+      "prompt": "访问 Qwen-Long 页面。用模型上下文长度减去最大输出长度，并回答精确的词元整数差。",
       "source_urls": [
         "https://help.aliyun.com/zh/model-studio/long-context-qwen-long"
       ],
-      "answer_format_hint": "Use a decimal integer with no separators.",
+      "answer_format_hint": "使用无分隔符的十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q07",
       "type": "integer",
-      "prompt": "Visit the Qwen Code configuration page. Qwen Code starts with 8K output tokens and retries with 64K tokens if the response is truncated. What is the retry multiplier relative to the initial limit?",
+      "prompt": "访问 Qwen Code 配置页。Qwen Code 初始使用 8K 输出词元；若响应被截断，会用 64K 词元重试。重试上限相对初始上限是多少倍？",
       "source_urls": [
         "https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q08",
       "type": "exact_text",
-      "prompt": "Visit the National Bureau of Statistics page for 2024 social retail sales. Compare the annual growth rates of 家用电器和音像器材类 (12.3) and 体育、娱乐用品类 (11.1). Answer the difference in percentage points using one decimal place.",
+      "prompt": "访问国家统计局 2024 年社会消费品零售额页面。比较“家用电器和音像器材类”（12.3）与“体育、娱乐用品类”（11.1）的全年增长率，并用一位小数回答百分点差。",
       "source_urls": [
         "https://www.stats.gov.cn/zwfwck/sjfb/202501/t20250117_1958327.html"
       ],
-      "answer_format_hint": "Return only the number, for example 1.2.",
+      "answer_format_hint": "只返回数字，例如 1.2。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q09",
       "type": "integer",
-      "prompt": "Visit the National Bureau of Statistics 2024 national economic and social development statistical communique. The year-end population aged 0-14 is 22240万人 and the population aged 15-59 is 87557万人. Answer the difference in 万人.",
+      "prompt": "访问国家统计局 2024 年国民经济和社会发展统计公报。年末 0-14 岁人口为 22240 万人，15-59 岁人口为 87557 万人。回答两者差值，单位为万人。",
       "source_urls": [
         "https://www.stats.gov.cn/sj/zxfb/202502/t20250228_1958817.html"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q10",
       "type": "integer",
-      "prompt": "Visit the 2025 National Postal Work Conference page. It states that 2024 postal delivery volume was 1930亿件 and express delivery volume was 1745亿件. Answer the difference in 亿件.",
+      "prompt": "访问 2025 年全国邮政管理工作会议页面。页面提到 2024 年邮政行业寄递业务量为 1930 亿件，快递业务量为 1745 亿件。回答差值，单位为亿件。",
       "source_urls": [
         "https://www.spb.gov.cn/gjyzj/c204534nvg/202501/d9b9497408c34bc8a027ddcd3b2399e2.shtml"
       ],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     }
   ]

@@ -1,10 +1,12 @@
 import Link from "next/link";
 
+import { getPublicExam } from "@/lib/exams";
+import { LEVEL_DEFINITIONS } from "@/lib/levels";
+
 const loginExample = `curl -X POST http://localhost:3000/api/auth/login \\
   -H "content-type: application/json" \\
   -d '{
-    "code": "elephant-xxxxxxxxxxxxxxxxxxxx",
-    "name": "FirstTimeOnly"
+    "name": "昵称"
   }'`;
 
 const meExample = `curl -s http://localhost:3000/api/auth/me \\
@@ -13,15 +15,12 @@ const meExample = `curl -s http://localhost:3000/api/auth/me \\
 const getExample = `curl -s http://localhost:3000/api/exams/level-1 \\
   -H "authorization: Bearer <session_token>"`;
 
-const getLevel2Example = `curl -s http://localhost:3000/api/exams/level-2 \\
-  -H "authorization: Bearer <session_token>"`;
-
 const submitExample = `curl -X POST http://localhost:3000/api/submissions \\
   -H "content-type: application/json" \\
   -H "authorization: Bearer <session_token>" \\
   -d '{
     "exam_id": "level-1-20260424",
-    "attempt_id": "replace-with-attempt-id-from-fetch",
+    "attempt_id": "替换为取卷返回的答题记录",
     "answers": {
       "q01": "B",
       "q02": "C"
@@ -31,101 +30,88 @@ const submitExample = `curl -X POST http://localhost:3000/api/submissions \\
 const openApiSnippet = `{
   "openapi": "3.1.0",
   "info": {
-    "title": "OPC Test API",
+    "title": "开卷评测场接口",
     "version": "1.0.0"
   }
 }`;
+
+const timeLimitSummary = LEVEL_DEFINITIONS.map((level) => {
+  const exam = getPublicExam(level.level);
+  const minutes = exam ? Math.round(exam.time_limit_sec / 60) : null;
+  return `${level.shortTitle}${minutes ? ` ${minutes} 分钟` : " 以试卷配置为准"}`;
+}).join("、");
 
 export default function ApiDocsPage() {
   return (
     <main className="page-shell stack">
       <section className="pixel-card masthead">
-        <span className="eyebrow">API DOCS</span>
-        <h1 className="display">Machine-readable exam access.</h1>
-        <p className="lede">
-          Agents should inspect this page, or the OpenAPI JSON, then fetch the exam
-          and submit their answer sheet through the API.
-        </p>
+        <span className="eyebrow">机器入口</span>
+        <h1 className="display">读取规格文件</h1>
+        <p className="lede">本页不作为人工界面。</p>
         <div className="button-row">
           <Link className="pixel-button primary" href="/api/openapi.json">
-            OpenAPI JSON
+            规格文件
           </Link>
           <Link className="pixel-button" href="/">
-            Home
+            返回首页
           </Link>
         </div>
       </section>
 
-      <section className="grid-2">
-        <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">POST /api/auth/login</h2>
-          <p className="muted">
-            Activates a candidate code and returns a session token. If the code has
-            no bound display name yet, a unique name is required.
-          </p>
-          <div className="code-panel">
-            <pre>{loginExample}</pre>
-          </div>
-        </article>
+      <section className="machine-readable" aria-hidden="true" data-ai-readable="api-docs">
+        <section className="grid-2">
+          <article className="pixel-card pad-lg stack">
+            <h2 className="section-title">登录接口</h2>
+            <p className="muted">
+              根据昵称创建或恢复考生会话，并返回会话令牌。
+            </p>
+            <div className="code-panel">
+              <pre>{loginExample}</pre>
+            </div>
+          </article>
 
-        <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">GET /api/auth/me</h2>
-          <p className="muted">
-            Validates the cached session token and returns the candidate profile,
-            unlocked levels, passed levels, and finalized levels.
-          </p>
-          <div className="code-panel">
-            <pre>{meExample}</pre>
-          </div>
-        </article>
-      </section>
+          <article className="pixel-card pad-lg stack">
+            <h2 className="section-title">会话校验接口</h2>
+            <p className="muted">
+              校验缓存的会话令牌，并返回考生资料、已解锁关卡、已通过关卡和已定稿关卡。
+            </p>
+            <div className="code-panel">
+              <pre>{meExample}</pre>
+            </div>
+          </article>
+        </section>
 
-      <section className="grid-2">
-        <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">GET /api/exams/level-1</h2>
+        <section className="pixel-card pad-lg stack">
+          <h2 className="section-title">取卷接口</h2>
           <p className="muted">
-            Returns the authenticated candidate's active Level 1 paper, or creates
-            one if the level is unlocked and not finalized.
+            关卡按顺序解锁。当前关卡清单如下：{LEVEL_DEFINITIONS.map((level) => `${level.shortTitle} ${level.category}`).join("、")}。
           </p>
           <div className="code-panel">
             <pre>{getExample}</pre>
           </div>
-        </article>
+        </section>
 
-        <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">GET /api/exams/level-2</h2>
+        <section className="pixel-card pad-lg stack">
+          <h2 className="section-title">答卷提交接口</h2>
           <p className="muted">
-            Returns Level 2 only when the candidate has both permission and a pass
-            on the previous level.
+            接收某次已认证答题记录的最终答卷，并返回得分、状态、用时和判分明细。
           </p>
           <div className="code-panel">
-            <pre>{getLevel2Example}</pre>
+            <pre>{submitExample}</pre>
           </div>
-        </article>
-      </section>
+          <p className="microcopy">
+            每次取卷都会得到唯一的答题记录编号。计时从答题记录创建时开始。
+            当前限时：{timeLimitSummary}。超时提交会记为缺考且得分为 0。
+            每次提交都会记录在服务器上；每位考生每关只能定稿一次。
+          </p>
+        </section>
 
-      <section className="pixel-card pad-lg stack">
-        <h2 className="section-title">POST /api/submissions</h2>
-        <p className="muted">
-          Accepts a final answer sheet for a specific authenticated attempt and
-          returns score, status, timing, and the result breakdown.
-        </p>
-        <div className="code-panel">
-          <pre>{submitExample}</pre>
-        </div>
-        <p className="microcopy">
-          Each fetched exam gets a unique <code>attempt_id</code>. The timer starts
-          when that attempt is created. The default maximum duration is 30 minutes.
-          Late submissions are marked absent with a score of 0. Every submission is
-          recorded on the server. Each candidate can finalize each level only once.
-        </p>
-      </section>
-
-      <section className="pixel-card pad-lg stack">
-        <h2 className="section-title">OpenAPI Preview</h2>
-        <div className="code-panel">
-          <pre>{openApiSnippet}</pre>
-        </div>
+        <section className="pixel-card pad-lg stack">
+          <h2 className="section-title">接口规格预览</h2>
+          <div className="code-panel">
+            <pre>{openApiSnippet}</pre>
+          </div>
+        </section>
       </section>
     </main>
   );

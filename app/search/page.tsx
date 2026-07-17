@@ -14,17 +14,17 @@ export default async function SearchPage({
   return (
     <main className="page-shell stack">
       <section className="pixel-card masthead">
-        <span className="eyebrow">Search</span>
-        <h1 className="display">Station search results.</h1>
+        <span className="eyebrow">站内检索</span>
+        <h1 className="display">材料检索结果。</h1>
         <p className="lede">
-          Query: <code>{rawQuery || "(empty)"}</code>
+          查询词：<code>{rawQuery || "（空）"}</code>
         </p>
       </section>
 
       <section className="pixel-card pad-lg stack">
-        <h2 className="section-title">Results</h2>
+        <h2 className="section-title">匹配结果</h2>
         {results.length === 0 ? (
-          <p className="muted">No indexed materials matched this search query.</p>
+          <p className="muted">没有索引材料匹配这个查询词。</p>
         ) : (
           <ul className="link-list">
             {results.map((result) => (
@@ -32,7 +32,7 @@ export default async function SearchPage({
                 <div className="search-result">
                   <strong>{result.title}</strong>
                   <span className="muted">{result.description}</span>
-                  <Link href={result.href}>{result.href}</Link>
+                  <Link href={result.href}>打开</Link>
                 </div>
               </li>
             ))}

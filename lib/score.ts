@@ -21,25 +21,25 @@ export function scoreSubmission(
   nowMs = Date.now(),
 ): SubmissionResponse {
   if (!payload || typeof payload !== "object") {
-    throw new SubmissionValidationError("Missing submission payload.");
+    throw new SubmissionValidationError("缺少提交载荷。");
   }
 
   if (!payload.attempt_id || typeof payload.attempt_id !== "string") {
-    throw new SubmissionValidationError("attempt_id is required.");
+    throw new SubmissionValidationError("必须提供答题记录编号。");
   }
 
   if (!payload.answers || typeof payload.answers !== "object") {
-    throw new SubmissionValidationError("answers must be an object.");
+    throw new SubmissionValidationError("答案必须是对象。");
   }
 
   const attempt = getStoredAttempt(payload.attempt_id);
 
   if (!attempt) {
-    throw new SubmissionValidationError("Unknown attempt_id.");
+    throw new SubmissionValidationError("未知答题记录编号。");
   }
 
   if (attempt.exam_id !== payload.exam_id) {
-    throw new SubmissionValidationError("attempt_id does not match exam_id.");
+    throw new SubmissionValidationError("答题记录编号与试卷编号不匹配。");
   }
 
   const timedOut = nowMs > new Date(attempt.expires_at).getTime();

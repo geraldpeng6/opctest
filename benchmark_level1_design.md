@@ -1,8 +1,8 @@
-# Agent Benchmark Level 1 设计草案
+# 智能体基准评测第一关设计草案
 
 ## 1. 目标
 
-做一个对 AI agent 友好的小型评测网站：
+做一个对智能体友好的小型评测网站：
 
 - AI 先通过统一接口获取试卷
 - AI 再按约定提交答案
@@ -10,7 +10,7 @@
 - 题目答案固定、可验证、低争议
 - 第一关先控制在 10 题，重点测基础能力和最小工具使用能力
 
-这个方向和几个主流 benchmark 的思路是一致的：
+这个方向和几个主流基准评测的思路是一致的：
 
 - GAIA 强调题目对人类“概念上简单”，但需要推理、浏览、工具使用
 - BrowseComp 强调答案应当简短、唯一、可验证
@@ -18,7 +18,7 @@
 
 对第一关来说，不建议一上来就做非常难的开放互联网题。更稳妥的做法是：
 
-1. 先做一个 `Level 1`，以固定答案、短输出、可自动判分为主
+1. 先做一个“第一关”，以固定答案、短输出、可自动判分为主
 2. 浏览能力优先测试“站内搜索 / 站内页面跳转 / 简单 API 调用”
 3. 外网搜索题先少量引入，且最好用“新鲜、冷门、非预训练记忆型”的数据
 
@@ -28,7 +28,7 @@
 
 - 答案短：数字、短字符串、单个选项、日期、ID、SKU 这类最稳
 - 唯一：尽量避免“差不多也算对”
-- 可验证：最好 exact match，最多做大小写无关或日期格式归一
+- 可验证：最好精确匹配，最多做大小写无关或日期格式归一
 - 稳定：不要依赖随时间变化的数据
 - 抗背题：不能大量依赖模型训练中高频出现的常识事实
 
@@ -71,7 +71,7 @@
 ```json
 {
   "exam_id": "level-1-20260424",
-  "title": "Agent Benchmark Level 1",
+  "title": "智能体基准评测第一关",
   "time_limit_sec": 600,
   "submit_url": "/api/submissions",
   "questions": [
@@ -124,13 +124,13 @@
 ### 4.3 判分规则
 
 - `single_choice`: 只接受 `A/B/C/D`
-- `exact_text`: 去除首尾空格后 exact match
+- `exact_text`: 去除首尾空格后精确匹配
 - `date_yyyymmdd`: 统一归一为 8 位数字后比较
 - `integer`: 只接受十进制整数字符串
 
 第一版最好以 `single_choice` 和 `integer` 为主，稳定性最高。
 
-## 5. Level 1 初版 10 题
+## 5. 第一关初版 10 题
 
 下面这 10 题是可以直接上线的第一版题库草案。为了同时测“无工具能力”和“会不会发请求找信息”，我把它们分成两组：
 
@@ -195,9 +195,9 @@
 - 页面内容建议：
 
 ```text
-Name: Nora Rivera
-Birthday: March 14, 1991
-Role: Archivist
+姓名：诺拉·里维拉
+生日：1991年3月14日
+职责：档案员
 ```
 
 - 标准答案：`19910314`
@@ -211,11 +211,11 @@ Role: Archivist
 - 页面内容建议：
 
 ```text
-SKU      Name        Price
-T-100    Wrench      25
-T-220    Hammer      19
-T-315    Pliers      23
-T-410    Saw         31
+货号      名称      价格
+T-100     扳手      25
+T-220     锤子      19
+T-315     钳子      23
+T-410     手锯      31
 ```
 
 - 选项：
@@ -234,10 +234,10 @@ T-410    Saw         31
 - 页面内容建议：
 
 ```text
-Shipping Rules
-1. If weight <= 2kg and order total >= 100, use EXPRESS-LITE.
-2. If weight <= 2kg and order total < 100, use STANDARD-S.
-3. If weight > 2kg, use HEAVY-X.
+配送规则
+1. 若重量小于等于 2kg 且订单总额大于等于 100，使用 EXPRESS-LITE。
+2. 若重量小于等于 2kg 且订单总额小于 100，使用 STANDARD-S。
+3. 若重量大于 2kg，使用 HEAVY-X。
 ```
 
 - 选项：
@@ -260,17 +260,17 @@ Shipping Rules
 `/materials/projects/aurora`
 
 ```text
-Project: Aurora
-Owner: Liam Chen
-Status: Active
+项目：极光
+负责人：李明辰
+状态：活跃
 ```
 
 `/materials/people/liam-chen`
 
 ```text
-Name: Liam Chen
-Employee ID: EC-4182
-Department: Research
+姓名：李明辰
+员工编号：EC-4182
+部门：研究部
 ```
 
 - 标准答案：`EC-4182`
@@ -279,20 +279,20 @@ Department: Research
 ### Q09 站内搜索
 
 - 类型：`exact_text`
-- 依赖接口：`GET /search?q=blue+harbor`
-- 题面：使用站内搜索接口搜索 `blue harbor`，打开最相关结果页，回答其中记录的档案编号。
+- 依赖接口：`GET /search?q=蓝港`
+- 题面：使用站内搜索接口搜索“蓝港”，打开最相关结果页，回答其中记录的档案编号。
 - 搜索结果建议唯一命中到 `/materials/archive/blue-harbor-note`
 - 页面内容建议：
 
 ```text
-Archive Title: Blue Harbor Note
-Archive Code: AH-9037
+档案标题：蓝港档案
+档案码：AH-9037
 ```
 
 - 标准答案：`AH-9037`
 - 测试能力：主动调用搜索接口、打开结果、抽取字段
 
-### Q10 API 检索 + 简单计算
+### Q10 接口检索 + 简单计算
 
 - 类型：`integer`
 - 依赖接口：`GET /api/data/warehouse-a`
@@ -310,7 +310,7 @@ Archive Code: AH-9037
 ```
 
 - 标准答案：`22`
-- 测试能力：API 请求、JSON 解析、数值比较
+- 测试能力：接口请求、JSON 解析、数值比较
 
 ## 6. 为什么这套题适合作为第一关
 
@@ -318,10 +318,10 @@ Archive Code: AH-9037
 
 所有答案都是固定的，不依赖实时互联网，不依赖模型是否“背过知识点”。
 
-### 6.2 能区分 agent 和 chat model
+### 6.2 能区分智能体和聊天模型
 
 - 普通聊天模型通常能做对 Q01-Q04
-- 真正会主动请求页面 / API 的 agent 才更容易做对 Q05-Q10
+- 真正会主动请求页面 / 接口的智能体才更容易做对 Q05-Q10
 
 也就是说，这套题虽然简单，但已经开始测“是否会用工具”而不只是“会不会聊天”。
 
@@ -345,7 +345,7 @@ Archive Code: AH-9037
 
 - 根据会议页面找到发言人，再去人物页找入职年份，再算工龄
 - 根据产品页找到制造商，再去制造商页找成立日期，输出 `YYYYMMDD`
-- 给一个唯一但冷门的描述，让 agent 必须搜索站内知识库后定位正确条目
+- 给一个唯一但冷门的描述，让智能体必须搜索站内知识库后定位正确条目
 
 ## 8. 一个关键建议
 
@@ -362,16 +362,16 @@ Archive Code: AH-9037
 3. 问题不直接暴露答案字段所在页面
 4. 但答案又能被你们稳定验证
 
-这类题最符合“难找、好验”的 benchmark 思路。
+这类题最符合“难找、好验”的基准评测思路。
 
 ## 9. 后续建议
 
 如果你愿意，我下一步可以继续直接帮你补两份内容：
 
 1. 把这 10 题改成一份可直接给前后端联调的 `exam.json`
-2. 再补一版 `Level 2` 的 10 题，专门测站内搜索和多跳检索
+2. 再补一版第二关的 10 题，专门测站内搜索和多跳检索
 
-## 10. 参考 benchmark
+## 10. 参考基准评测
 
 - BrowseComp: https://openai.com/index/browsecomp/
 - GAIA: https://arxiv.org/abs/2311.12983

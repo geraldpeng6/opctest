@@ -1,0 +1,110 @@
+{
+  "exam_id": "level-3-20260425",
+  "title": "第三关：数据运营",
+  "time_limit_sec": 2700,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "integer",
+      "prompt": "使用订单与退款接口，统计唯一订单数：订单已送达、送达日期晚于承诺日期，且没有任何退款成功记录。",
+      "materials": [
+        "/materials/docs/orders-refunds-v1",
+        "/api/data/level-3/orders?page=1",
+        "/api/data/level-3/refunds?page=1"
+      ],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q02",
+      "type": "exact_text",
+      "prompt": "打开仓库审计文件和供应商映射接口。找到差异最大的货号，并回答它的供应商代码。",
+      "materials": [
+        "/files/level-3/warehouse-audit.pdf",
+        "/api/data/level-3/vendor-map"
+      ],
+      "answer_format_hint": "按页面所示原样返回供应商代码。"
+    },
+    {
+      "id": "q03",
+      "type": "exact_text",
+      "prompt": "将退款规则 v2 应用于客服案例接口，并回答唯一符合自动退款条件的案例编号。",
+      "materials": [
+        "/materials/policy/refund-v2",
+        "/api/data/level-3/support-cases"
+      ],
+      "answer_format_hint": "按页面所示原样返回案例编号。"
+    },
+    {
+      "id": "q04",
+      "type": "exact_text",
+      "prompt": "读取目录文件和价格覆盖表。应用状态为“生效”的价格覆盖后，回答最便宜的生效套装货号。",
+      "materials": [
+        "/files/level-3/catalog.xml",
+        "/files/level-3/price-overrides.csv"
+      ],
+      "answer_format_hint": "按页面所示原样返回货号。"
+    },
+    {
+      "id": "q05",
+      "type": "date_yyyymmdd",
+      "prompt": "读取派工日历和时区说明。将第一个东京维护窗口开始时间转换为协调世界时，并回答对应日历日期。",
+      "materials": [
+        "/files/level-3/dispatch-window.ics",
+        "/materials/policy/timezone-note"
+      ],
+      "answer_format_hint": "使用八位数字，例如 20260514。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "使用设备日志指南和事件日志，按资产代码汇总计入的停机时间，并回答总数最大的资产。",
+      "materials": [
+        "/materials/docs/device-events-v1",
+        "/files/level-3/device-events.jsonl"
+      ],
+      "answer_format_hint": "按日志所示原样返回资产代码。"
+    },
+    {
+      "id": "q07",
+      "type": "integer",
+      "prompt": "读取采购台账规则和压缩包。对货号 R-44，计算已入账入库数量减去已入账出库数量，再减去已入账损坏数量。",
+      "materials": [
+        "/materials/docs/purchase-ledger-v1",
+        "/files/level-3/purchase-ledger.zip"
+      ],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q08",
+      "type": "exact_text",
+      "prompt": "读取客服处理手册和 customer-118 案例页。根据规则，回答唯一正确的处理代码。",
+      "materials": [
+        "/materials/policy/support-playbook-v2",
+        "/materials/cases/customer-118"
+      ],
+      "answer_format_hint": "按规则所示原样返回处理代码。"
+    },
+    {
+      "id": "q09",
+      "type": "integer",
+      "prompt": "使用水星发射简报、团队名册表和徽章映射接口。统计发射周徽章标记为“推进”且名册状态为“在岗”的工程人员数量。",
+      "materials": [
+        "/materials/archive/mercury-launch-brief",
+        "/files/level-3/team-roster.csv",
+        "/api/data/level-3/badge-map"
+      ],
+      "answer_format_hint": "使用十进制整数。"
+    },
+    {
+      "id": "q10",
+      "type": "exact_text",
+      "prompt": "使用库存接口指南和分页库存移动接口。按文档公式累计最近 30 天净流出，并回答唯一触发红色补货的告警代码。",
+      "materials": [
+        "/materials/docs/inventory-api-v1",
+        "/api/data/level-3/inventory-movements?cursor=start"
+      ],
+      "answer_format_hint": "按接口所示原样返回告警代码。"
+    }
+  ]
+}

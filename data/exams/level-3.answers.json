@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-3-20260425",
+  "answers": {
+    "q01": "7",
+    "q02": "VN-204",
+    "q03": "CASE-118",
+    "q04": "B-17",
+    "q05": "20260514",
+    "q06": "MX-883",
+    "q07": "182",
+    "q08": "REFUND-PARTIAL-RESTOCK",
+    "q09": "6",
+    "q10": "ALERT-RED-27"
+  },
+  "normalizers": {
+    "q01": "integer",
+    "q02": "exact_text",
+    "q03": "exact_text",
+    "q04": "exact_text",
+    "q05": "date_yyyymmdd",
+    "q06": "exact_text",
+    "q07": "integer",
+    "q08": "exact_text",
+    "q09": "integer",
+    "q10": "exact_text"
+  }
+}

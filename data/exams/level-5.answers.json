@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-5-20260707",
+  "answers": {
+    "q01": "270",
+    "q02": "170",
+    "q03": "2",
+    "q04": "30",
+    "q05": "93",
+    "q06": "934.0",
+    "q07": "通过",
+    "q08": "2",
+    "q09": "21",
+    "q10": "39.2"
+  },
+  "normalizers": {
+    "q01": "integer",
+    "q02": "integer",
+    "q03": "integer",
+    "q04": "integer",
+    "q05": "integer",
+    "q06": "exact_text",
+    "q07": "exact_text",
+    "q08": "integer",
+    "q09": "integer",
+    "q10": "exact_text"
+  }
+}

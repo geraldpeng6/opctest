@@ -1,0 +1,20 @@
+{
+  "1": {
+    "page": 1,
+    "next_page": 2,
+    "items": [
+      { "refund_id": "RF-01", "order_id": "ORD-101", "status": "退款成功" },
+      { "refund_id": "RF-02", "order_id": "ORD-106", "status": "退款成功" },
+      { "refund_id": "RF-03", "order_id": "ORD-107", "status": "待处理" },
+      { "refund_id": "RF-04", "order_id": "ORD-999", "status": "退款成功" }
+    ]
+  },
+  "2": {
+    "page": 2,
+    "next_page": null,
+    "items": [
+      { "refund_id": "RF-05", "order_id": "ORD-110", "status": "退款成功" },
+      { "refund_id": "RF-06", "order_id": "ORD-108", "status": "退款失败" }
+    ]
+  }
+}

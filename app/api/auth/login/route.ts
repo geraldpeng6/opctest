@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { AuthError, loginWithCode } from "@/lib/auth";
+import { AuthError, loginWithName } from "@/lib/auth";
 import type { AuthLoginPayload } from "@/lib/types";
 
 export async function POST(request: Request) {
@@ -9,16 +9,16 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as AuthLoginPayload;
   } catch {
-    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+    return NextResponse.json({ error: "请求正文不是有效结构化数据。" }, { status: 400 });
   }
 
   try {
-    return NextResponse.json(loginWithCode(payload));
+    return NextResponse.json(loginWithName(payload));
   } catch (error) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    return NextResponse.json({ error: "Unexpected authentication error." }, { status: 500 });
+    return NextResponse.json({ error: "认证时出现意外错误。" }, { status: 500 });
   }
 }

@@ -1,0 +1,9 @@
+{
+  "vendors": [
+    { "sku": "AX-10", "vendor_code": "VN-101" },
+    { "sku": "BZ-88", "vendor_code": "VN-118" },
+    { "sku": "CR-22", "vendor_code": "VN-143" },
+    { "sku": "WX-55", "vendor_code": "VN-204" },
+    { "sku": "LQ-71", "vendor_code": "VN-190" }
+  ]
+}

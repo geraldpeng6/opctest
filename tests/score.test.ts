@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { createCandidateRecord, loginWithCode, saveRegistry } from "@/lib/auth";
+import { loginWithName } from "@/lib/auth";
 import { createOrLoadAttemptForCandidate, getStoredAttempt } from "@/lib/attempts";
 import { normalizeAnswer } from "@/lib/normalize";
 import { setRuntimeRootForTests } from "@/lib/runtime-paths";
@@ -21,21 +21,28 @@ function cleanupRuntimeDir(dir: string) {
   rmSync(dir, { recursive: true, force: true });
 }
 
-test("normalizeAnswer handles single choice and date formats", () => {
+test("答案归一化能处理单选和日期格式", () => {
   assert.equal(normalizeAnswer(" c ", "single_choice"), "C");
   assert.equal(normalizeAnswer("1991-03-14", "date_yyyymmdd"), "19910314");
   assert.equal(normalizeAnswer(" 22 ", "integer"), "22");
 });
 
-test("scoreSubmission returns expected score shape", () => {
-  const dir = withRuntimeDir();
-  saveRegistry({
-    candidates: [createCandidateRecord("eagle-23456789abcdefghjkmn", 2, "2026-04-24T10:00:00.000Z")],
-  });
+test("答案归一化能处理新增题型", () => {
+  assert.equal(normalizeAnswer("c, A，a", "multiple_choice"), "A,C");
+  assert.equal(normalizeAnswer("b > d > a", "ordered_list"), "B>D>A");
+  assert.equal(normalizeAnswer("10.0", "decimal"), "10");
+  assert.equal(
+    normalizeAnswer('{"items":["A1"],"name":"样例"}', "json_object"),
+    normalizeAnswer('{"name":"样例","items":["A1"]}', "json_object"),
+  );
+  assert.equal(normalizeAnswer(" patch-b ", "code_patch"), "PATCH-B");
+});
 
-  const auth = loginWithCode({
-    code: "eagle-23456789abcdefghjkmn",
-    name: "Gina",
+test("提交判分会返回预期成绩结构", () => {
+  const dir = withRuntimeDir();
+
+  const auth = loginWithName({
+    name: "壬九",
   }, Date.UTC(2026, 3, 24, 10, 0, 0));
 
   const exam = createOrLoadAttemptForCandidate(

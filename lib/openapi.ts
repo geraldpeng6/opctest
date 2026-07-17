@@ -1,51 +1,67 @@
+import { LEVEL_DEFINITIONS } from "@/lib/levels";
+
 export function getOpenApiDocument() {
+  const examPaths = Object.fromEntries(
+    LEVEL_DEFINITIONS.map((definition) => [
+      `/api/exams/${definition.level}`,
+      {
+        get: {
+          summary: `读取已认证考生的${definition.shortTitle}试卷。`,
+          description: definition.category,
+          responses: {
+            "200": {
+              description: "不含答案的已认证试卷载荷，附带答题记录元数据。",
+            },
+          },
+        },
+      },
+    ]),
+  );
+
   return {
     openapi: "3.1.0",
     info: {
-      title: "OPC Test API",
+      title: "开卷评测场接口",
       version: "1.0.0",
       description:
-        "Token-based exam API for activating a candidate code, retrieving unlocked papers, and submitting final answers.",
+        "基于令牌的评测接口，用于创建或恢复考生会话、读取已解锁试卷并提交最终答案。",
     },
     paths: {
       "/api/auth/login": {
         post: {
-          summary: "Activate a code and receive a session token.",
+          summary: "提交昵称并接收会话令牌。",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["name"],
+                  properties: {
+                    name: {
+                      type: "string",
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
       "/api/auth/me": {
         get: {
-          summary: "Inspect the authenticated candidate profile.",
+          summary: "查看已认证考生资料。",
         },
       },
       "/api/leaderboards": {
         get: {
-          summary: "Read the public overall and per-level leaderboards.",
+          summary: "读取公开总榜和分关排行榜。",
         },
       },
-      "/api/exams/level-1": {
-        get: {
-          summary: "Fetch the authenticated candidate's Level 1 exam.",
-          responses: {
-            "200": {
-              description: "Authenticated exam payload without answer key, with attempt metadata.",
-            },
-          },
-        },
-      },
-      "/api/exams/level-2": {
-        get: {
-          summary: "Fetch the authenticated candidate's Level 2 exam.",
-          responses: {
-            "200": {
-              description: "Authenticated exam payload without answer key, with attempt metadata.",
-            },
-          },
-        },
-      },
+      ...examPaths,
       "/api/submissions": {
         post: {
-          summary: "Submit answers for grading.",
+          summary: "提交答案并判分。",
           requestBody: {
             required: true,
             content: {
@@ -73,10 +89,10 @@ export function getOpenApiDocument() {
           },
           responses: {
             "200": {
-              description: "Submission graded successfully.",
+              description: "答卷已成功判分。",
             },
             "400": {
-              description: "Bad request.",
+              description: "请求格式错误。",
             },
           },
         },

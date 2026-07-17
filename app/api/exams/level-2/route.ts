@@ -20,6 +20,6 @@ export function GET(request: Request) {
       );
     }
 
-    return NextResponse.json({ error: "Unexpected exam error." }, { status: 500 });
+    return NextResponse.json({ error: "读取试卷时出现意外错误。" }, { status: 500 });
   }
 }

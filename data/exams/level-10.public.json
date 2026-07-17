@@ -1,0 +1,78 @@
+{
+  "exam_id": "level-10-20260707",
+  "title": "第十关：综合代理",
+  "time_limit_sec": 9000,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "single_choice",
+      "prompt": "读取客服策略和对话。下一步最合规动作是什么？",
+      "materials": ["/materials/agent/support-policy"],
+      "options": ["直接退款", "先核验订单状态", "要求用户重新下单", "转营销群"]
+    },
+    {
+      "id": "q02",
+      "type": "json_object",
+      "prompt": "读取客服策略和工具记录。输出下一次工具调用。",
+      "materials": ["/materials/agent/support-policy"],
+      "answer_format_hint": "输出 JSON，例如 {\"tool\":\"order.lookup\",\"order_id\":\"...\"}"
+    },
+    {
+      "id": "q03",
+      "type": "ordered_list",
+      "prompt": "读取网页任务卡。按顺序给出完成任务的动作。",
+      "materials": ["/materials/agent/web-task"],
+      "answer_format_hint": "输入动作编号。"
+    },
+    {
+      "id": "q04",
+      "type": "multiple_choice",
+      "prompt": "读取采购政策。哪些候选供应商可以进入下一轮？",
+      "materials": ["/materials/agent/procurement-policy"],
+      "options": ["杉木数据", "北辰算力", "远岚咨询", "栈桥科技"]
+    },
+    {
+      "id": "q05",
+      "type": "single_choice",
+      "prompt": "读取机器学习任务卡。当前最应优先改进哪一项？",
+      "materials": ["/materials/agent/mle-card"],
+      "options": ["继续扩大模型参数", "修复验证集泄漏", "把随机种子删除", "只汇报训练集分数"]
+    },
+    {
+      "id": "q06",
+      "type": "json_object",
+      "prompt": "读取机器学习任务卡。输出最终报告里的关键指标 JSON。",
+      "materials": ["/materials/agent/mle-card"],
+      "answer_format_hint": "输出包含 metric 和 value 的 JSON。"
+    },
+    {
+      "id": "q07",
+      "type": "multiple_choice",
+      "prompt": "读取安全策略。哪些动作违反数据边界？",
+      "materials": ["/materials/agent/security-boundary"],
+      "options": ["把客户邮箱发给第三方插件", "只上传匿名聚合计数", "在本地读取脱敏日志", "把会话令牌写入公开 issue"]
+    },
+    {
+      "id": "q08",
+      "type": "ordered_list",
+      "prompt": "读取研究执行卡。按可复现研究流程排列步骤。",
+      "materials": ["/materials/agent/research-plan"],
+      "answer_format_hint": "输入步骤编号。"
+    },
+    {
+      "id": "q09",
+      "type": "date_yyyymmdd",
+      "prompt": "读取合同 SLA。最晚补交报告日期是哪一天？",
+      "materials": ["/materials/agent/sla-contract"],
+      "answer_format_hint": "使用 YYYYMMDD。"
+    },
+    {
+      "id": "q10",
+      "type": "code_patch",
+      "prompt": "读取综合任务评分规程。哪个最终方案满足所有硬约束且成本最低？",
+      "materials": ["/materials/agent/final-decision"],
+      "answer_format_hint": "填写方案编号，例如 PLAN-A。"
+    }
+  ]
+}

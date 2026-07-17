@@ -6,11 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --import tsx --test",
-    "generate:codes": "tsx scripts/generate-codes.ts"
+    "test": "node --import tsx --test"
   },
   "dependencies": {
-    "@fontsource/press-start-2p": "5.2.7",
+    "@fontsource/noto-sans-sc": "^5.2.9",
+    "@fontsource/noto-serif-sc": "^5.2.9",
+    "@fontsource/zcool-qingke-huangyou": "^5.2.8",
     "next": "16.2.4",
     "react": "19.2.5",
     "react-dom": "19.2.5"

@@ -29,7 +29,7 @@ export function getLeaderboards(): LeaderboardsResponse {
         })
         .map((record, index) => ({
           rank: index + 1,
-          name: record.candidate_name ?? "Anonymous",
+          name: record.candidate_name ?? "匿名考生",
           level: level as ExamLevel,
           score: record.score,
           total: record.total,
@@ -57,7 +57,7 @@ export function getLeaderboards(): LeaderboardsResponse {
     .filter((record) => record.candidate_name)
     .forEach((record) => {
       const entry = overall.get(record.candidate_id) ?? {
-        name: record.candidate_name ?? "Anonymous",
+        name: record.candidate_name ?? "匿名考生",
         total_score: 0,
         total_possible: 0,
         total_duration_sec: 0,

@@ -1,0 +1,77 @@
+{
+  "exam_id": "level-8-20260707",
+  "title": "第八关：抽象规则",
+  "time_limit_sec": 6000,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "single_choice",
+      "prompt": "序列为 2, 6, 12, 20, 30，下一个数是多少？",
+      "options": ["38", "40", "42", "44"]
+    },
+    {
+      "id": "q02",
+      "type": "exact_text",
+      "prompt": "读取符号合成规则。左格为 △□，中格为 ○□，右格应是什么？",
+      "materials": ["/materials/abstract/symbol-rules"],
+      "answer_format_hint": "按材料中的符号顺序作答。"
+    },
+    {
+      "id": "q03",
+      "type": "ordered_list",
+      "prompt": "读取变换流水线。把输入图形变成输出图形的操作顺序是什么？",
+      "materials": ["/materials/abstract/transform-pipeline"],
+      "answer_format_hint": "输入操作编号，例如 A,C,B。"
+    },
+    {
+      "id": "q04",
+      "type": "multiple_choice",
+      "prompt": "读取对称面板。哪些面板满足左右镜像对称？",
+      "materials": ["/materials/abstract/symmetry-panels"],
+      "options": ["面板 A", "面板 B", "面板 C", "面板 D"]
+    },
+    {
+      "id": "q05",
+      "type": "integer",
+      "prompt": "读取网格扩张规则。一个 2×3 黑格矩形向外扩张一圈后，黑格总数是多少？",
+      "materials": ["/materials/abstract/grid-rules"],
+      "answer_format_hint": "只填整数。"
+    },
+    {
+      "id": "q06",
+      "type": "exact_text",
+      "prompt": "读取颜色投票规则。红、蓝、蓝 三个输入格合成后的颜色是什么？",
+      "materials": ["/materials/abstract/color-vote"],
+      "answer_format_hint": "按颜色名作答。"
+    },
+    {
+      "id": "q07",
+      "type": "json_object",
+      "prompt": "读取属性规则。输入是 3 条边、实心、黑色。输出对象是什么？",
+      "materials": ["/materials/abstract/attribute-rules"],
+      "answer_format_hint": "格式：{\"shape\":\"triangle\",\"fill\":\"solid\",\"color\":\"black\"}"
+    },
+    {
+      "id": "q08",
+      "type": "ordered_list",
+      "prompt": "读取迷宫规则。从 S 到 G 的最短合法移动序列是什么？",
+      "materials": ["/materials/abstract/maze-rule"],
+      "answer_format_hint": "输入方向字母，U/D/L/R。"
+    },
+    {
+      "id": "q09",
+      "type": "single_choice",
+      "prompt": "读取类比映射。若 AB 映射为 BA，AAB 映射为什么？",
+      "materials": ["/materials/abstract/analogy-map"],
+      "options": ["BAA", "ABA", "BBA", "ABB"]
+    },
+    {
+      "id": "q10",
+      "type": "multiple_choice",
+      "prompt": "读取约束卡。哪些候选答案同时满足奇数、可被 3 整除、且小于 20？",
+      "materials": ["/materials/abstract/constraint-card"],
+      "options": ["9", "12", "15", "21"]
+    }
+  ]
+}

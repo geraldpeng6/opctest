@@ -1,81 +1,81 @@
 {
   "exam_id": "level-1-20260424",
-  "title": "Agent Benchmark Level 1",
+  "title": "第一关：通用基础",
   "time_limit_sec": 1800,
   "submit_url": "/api/submissions",
   "questions": [
     {
       "id": "q01",
       "type": "single_choice",
-      "prompt": "Calculate 137 + 289.",
+      "prompt": "计算 137 + 289。",
       "options": ["416", "426", "436", "446"],
-      "answer_format_hint": "Choose A, B, C, or D."
+      "answer_format_hint": "请选择 A、B、C 或 D。"
     },
     {
       "id": "q02",
       "type": "single_choice",
-      "prompt": "Find the next number in the sequence: 2, 6, 12, 20, 30, ?",
+      "prompt": "找出数列 2、6、12、20、30、？ 的下一个数字。",
       "options": ["36", "40", "42", "48"],
-      "answer_format_hint": "Choose A, B, C, or D."
+      "answer_format_hint": "请选择 A、B、C 或 D。"
     },
     {
       "id": "q03",
       "type": "date_yyyymmdd",
-      "prompt": "Visit /materials/profile/rivera. Find the birthday and answer in YYYYMMDD format.",
+      "prompt": "访问 /materials/profile/rivera，找出生日，并按 YYYYMMDD 格式作答。",
       "materials": ["/materials/profile/rivera"],
-      "answer_format_hint": "Use eight digits, for example 19910314."
+      "answer_format_hint": "使用八位数字，例如 19910314。"
     },
     {
       "id": "q04",
       "type": "single_choice",
-      "prompt": "Visit /materials/catalog/basic-tools. Which SKU has the lowest price?",
+      "prompt": "访问 /materials/catalog/basic-tools。哪一个货号价格最低？",
       "options": ["T-100", "T-220", "T-315", "T-410"],
       "materials": ["/materials/catalog/basic-tools"],
-      "answer_format_hint": "Choose A, B, C, or D."
+      "answer_format_hint": "请选择 A、B、C 或 D。"
     },
     {
       "id": "q05",
       "type": "single_choice",
-      "prompt": "Visit /materials/policy/shipping-v1. If weight is not above 2kg and order total is at least 100, which shipping method should be used?",
+      "prompt": "访问 /materials/policy/shipping-v1。若重量不超过 2kg 且订单总额至少为 100，应使用哪种配送方式？",
       "options": ["STANDARD-S", "HEAVY-X", "EXPRESS-LITE", "PICKUP"],
       "materials": ["/materials/policy/shipping-v1"],
-      "answer_format_hint": "Choose A, B, C, or D."
+      "answer_format_hint": "请选择 A、B、C 或 D。"
     },
     {
       "id": "q06",
       "type": "exact_text",
-      "prompt": "Visit /materials/projects/aurora, follow the owner to the related people page, and answer with the employee ID.",
+      "prompt": "访问 /materials/projects/aurora，沿着负责人线索打开对应人员页，并回答员工编号。",
       "materials": ["/materials/projects/aurora", "/materials/people/liam-chen"],
-      "answer_format_hint": "Return the ID exactly as shown."
+      "answer_format_hint": "按页面所示原样返回编号。"
     },
     {
       "id": "q07",
       "type": "exact_text",
-      "prompt": "Use /search?q=blue+harbor, open the matching archive page, and answer with the archive code.",
-      "materials": ["/search?q=blue+harbor", "/materials/archive/blue-harbor-note"],
-      "answer_format_hint": "Return the archive code exactly as shown."
+      "prompt": "使用 /search?q=蓝港，打开匹配的档案页，并回答档案码。",
+      "materials": ["/search?q=蓝港", "/materials/archive/blue-harbor-note"],
+      "answer_format_hint": "按页面所示原样返回档案码。"
     },
     {
       "id": "q08",
       "type": "integer",
-      "prompt": "Visit /api/data/warehouse-a. What is the largest in_stock value in the returned JSON?",
+      "prompt": "访问 /api/data/warehouse-a。返回结构化数据中库存字段 in_stock 的最大数值是多少？",
       "materials": ["/api/data/warehouse-a"],
-      "answer_format_hint": "Use a decimal integer."
+      "answer_format_hint": "使用十进制整数。"
     },
     {
       "id": "q09",
       "type": "exact_text",
-      "prompt": "Visit the OpenAI GPT-4.1 announcement page and find GPT-4.1's SWE-bench Verified score. Answer exactly as written on the page.",
+      "prompt": "访问 OpenAI GPT-4.1 公告页，找到 GPT-4.1 的 SWE-bench Verified 分数，并按页面写法原样作答。",
       "source_urls": ["https://openai.com/index/gpt-4-1/"],
-      "answer_format_hint": "Include the percent sign if the page includes it.",
+      "answer_format_hint": "如果页面包含百分号，答案也必须包含百分号。",
       "verified_at": "2026-04-24"
     },
     {
       "id": "q10",
       "type": "integer",
-      "prompt": "Visit the Python http.server documentation page and answer with the default listening port.",
+      "prompt": "访问 Python http.server 文档页，并回答默认监听端口。",
       "source_urls": ["https://docs.python.org/3/library/http.server.html"],
-      "answer_format_hint": "Use a decimal integer.",
+      "answer_format_hint": "使用十进制整数。",
       "verified_at": "2026-04-24"
     }
   ]

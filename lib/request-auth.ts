@@ -12,7 +12,7 @@ export function getBearerToken(request: Request) {
 export function requireBearerToken(request: Request) {
   const token = getBearerToken(request);
   if (!token) {
-    throw new AuthorizationError("Session token is required.");
+    throw new AuthorizationError("缺少会话令牌。");
   }
   return token;
 }

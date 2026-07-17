@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-6-20260707",
+  "answers": {
+    "q01": "竞争性抑制",
+    "q02": "12",
+    "q03": "5",
+    "q04": "100",
+    "q05": "98",
+    "q06": "乙苯",
+    "q07": "伽马样地",
+    "q08": "620",
+    "q09": "A",
+    "q10": "3"
+  },
+  "normalizers": {
+    "q01": "exact_text",
+    "q02": "integer",
+    "q03": "integer",
+    "q04": "integer",
+    "q05": "integer",
+    "q06": "exact_text",
+    "q07": "exact_text",
+    "q08": "integer",
+    "q09": "exact_text",
+    "q10": "integer"
+  }
+}

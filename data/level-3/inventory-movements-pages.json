@@ -1,0 +1,40 @@
+{
+  "start": {
+    "cursor": "start",
+    "next_cursor": "c1",
+    "catalog": {
+      "as_of": "2026-04-25",
+      "items": [
+        { "sku": "R-11", "on_hand": 40, "safety_stock": 35, "reorder_threshold": 60, "alert_code": "ALERT-RED-11" },
+        { "sku": "R-27", "on_hand": 18, "safety_stock": 25, "reorder_threshold": 70, "alert_code": "ALERT-RED-27" },
+        { "sku": "R-42", "on_hand": 22, "safety_stock": 20, "reorder_threshold": 50, "alert_code": "ALERT-RED-42" }
+      ]
+    },
+    "movements": [
+      { "sku": "R-11", "movement_type": "已发货", "units": 30, "occurred_at": "2026-04-05" },
+      { "sku": "R-11", "movement_type": "损坏", "units": 5, "occurred_at": "2026-04-10" },
+      { "sku": "R-27", "movement_type": "已发货", "units": 40, "occurred_at": "2026-04-08" },
+      { "sku": "R-27", "movement_type": "损坏", "units": 20, "occurred_at": "2026-04-11" },
+      { "sku": "R-42", "movement_type": "已发货", "units": 25, "occurred_at": "2026-04-09" }
+    ]
+  },
+  "c1": {
+    "cursor": "c1",
+    "next_cursor": "c2",
+    "movements": [
+      { "sku": "R-11", "movement_type": "补货", "units": 20, "occurred_at": "2026-04-14" },
+      { "sku": "R-27", "movement_type": "已发货", "units": 20, "occurred_at": "2026-04-16" },
+      { "sku": "R-27", "movement_type": "补货", "units": 5, "occurred_at": "2026-04-19" },
+      { "sku": "R-42", "movement_type": "损坏", "units": 15, "occurred_at": "2026-04-17" },
+      { "sku": "R-42", "movement_type": "已发货", "units": 15, "occurred_at": "2026-03-18" }
+    ]
+  },
+  "c2": {
+    "cursor": "c2",
+    "next_cursor": null,
+    "movements": [
+      { "sku": "R-11", "movement_type": "已发货", "units": 10, "occurred_at": "2026-03-10" },
+      { "sku": "R-42", "movement_type": "补货", "units": 0, "occurred_at": "2026-04-21" }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-# Agent Benchmark Level 2 设计草案
+# 智能体基准评测第二关设计草案
 
 ## 1. 目标
 
@@ -37,14 +37,14 @@
 
 - 来源：OpenAI GPT-5 for developers + GPT-4.1
 - 类型：`exact_text`
-- 能力：跨页面比较 benchmark 分数
+- 能力：跨页面比较基准分数
 - 答案：`23.4`
 
 ### Q02
 
 - 来源：OpenAI GPT-5.1 for developers + GPT-5 for developers
 - 类型：`exact_text`
-- 能力：跨页面比较 tool benchmark 分数
+- 能力：跨页面比较工具基准分数
 - 答案：`1.1`
 
 ### Q03
@@ -56,14 +56,14 @@
 
 ### Q04
 
-- 来源：DeepSeek API Docs + 阿里云百炼 Qwen-Long
+- 来源：DeepSeek 接口文档 + 阿里云百炼 Qwen-Long
 - 类型：`integer`
 - 能力：跨站点比较上下文长度倍数
 - 答案：`10`
 
 ### Q05
 
-- 来源：DeepSeek API Docs
+- 来源：DeepSeek 接口文档
 - 类型：`integer`
 - 能力：读取价格表并算倍率
 - 答案：`24`
@@ -77,7 +77,7 @@
 
 ### Q07
 
-- 来源：Qwen Code Docs
+- 来源：Qwen Code 文档
 - 类型：`integer`
 - 能力：读取配置说明并算倍率
 - 答案：`8`
@@ -103,11 +103,11 @@
 - 能力：资料分析式行业数据差值计算
 - 答案：`185`
 
-## 5. 为什么更像 Agent Benchmark
+## 5. 为什么更像智能体基准评测
 
 - 不再主要依赖站内页面
 - 多题需要跨页面核对后再计算
-- 中英文网页混合，必须真实打开页面而不是只靠训练记忆
+- 多来源网页混合，必须真实打开页面而不是只靠训练记忆
 - 资料分析题能拉开“会搜 + 会算 + 会格式化”的差距
 
 ## 6. 主要参考页面
@@ -116,9 +116,9 @@
 - OpenAI GPT-5.1 for developers: https://openai.com/index/gpt-5-1-for-developers/
 - OpenAI GPT-4.1: https://openai.com/index/gpt-4-1/
 - Python http.server: https://docs.python.org/3/library/http.server.html
-- DeepSeek API Docs: https://api-docs.deepseek.com/zh-cn/quick_start/pricing/
+- DeepSeek 接口文档: https://api-docs.deepseek.com/zh-cn/quick_start/pricing/
 - 阿里云百炼 Qwen-Long: https://help.aliyun.com/zh/model-studio/long-context-qwen-long
-- Qwen Code Docs: https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/
+- Qwen Code 文档: https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/
 - 国家统计局零售额页面: https://www.stats.gov.cn/zwfwck/sjfb/202501/t20250117_1958327.html
 - 国家统计局统计公报: https://www.stats.gov.cn/sj/zxfb/202502/t20250228_1958817.html
 - 国家邮政局会议页面: https://www.spb.gov.cn/gjyzj/c204534nvg/202501/d9b9497408c34bc8a027ddcd3b2399e2.shtml

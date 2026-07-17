@@ -2,10 +2,10 @@ import type { SearchResult } from "@/lib/types";
 
 const searchIndex: SearchResult[] = [
   {
-    query: "blue harbor",
-    title: "Blue Harbor Note",
+    query: "蓝港",
+    title: "蓝港档案",
     href: "/materials/archive/blue-harbor-note",
-    description: "Archive entry containing the code for Blue Harbor.",
+    description: "包含蓝港档案码的归档条目。",
   },
 ];
 

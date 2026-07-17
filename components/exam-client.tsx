@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { SESSION_STORAGE_KEY } from "@/lib/session";
-import type { PublicExam, Question, SubmissionResponse } from "@/lib/types";
+import type { ExamLevel, PublicExam, Question, SubmissionResponse } from "@/lib/types";
 
 type AnswersState = Record<string, string>;
 
 function renderQuestionLinks(question: Question) {
   const links = [
-    ...(question.materials ?? []).map((href) => ({ label: `Material: ${href}`, href })),
-    ...(question.source_urls ?? []).map((href) => ({ label: `Source: ${href}`, href })),
+    ...(question.materials ?? []).map((href, index) => ({ label: `资料 ${index + 1}`, href })),
+    ...(question.source_urls ?? []).map((href, index) => ({ label: `来源 ${index + 1}`, href })),
   ];
 
   if (links.length === 0) {
@@ -31,13 +31,23 @@ function renderQuestionLinks(question: Question) {
 function questionTypeLabel(question: Question) {
   switch (question.type) {
     case "single_choice":
-      return "choice";
+      return "选择";
+    case "multiple_choice":
+      return "多选";
+    case "ordered_list":
+      return "排序";
     case "integer":
-      return "integer";
+      return "整数";
+    case "decimal":
+      return "小数";
     case "date_yyyymmdd":
-      return "date";
+      return "日期";
+    case "json_object":
+      return "JSON";
+    case "code_patch":
+      return "补丁";
     default:
-      return "text";
+      return "文本";
   }
 }
 
@@ -47,7 +57,11 @@ function formatDuration(totalSeconds: number) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
+function submissionStatusLabel(status: SubmissionResponse["status"]) {
+  return status === "submitted" ? "已提交" : "超时缺考";
+}
+
+export function ExamClient({ level }: { level: ExamLevel }) {
   const [sessionToken, setSessionToken] = useState("");
   const [exam, setExam] = useState<PublicExam | null>(null);
   const [answers, setAnswers] = useState<AnswersState>({});
@@ -67,7 +81,7 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
     const loadExam = async () => {
       if (!sessionToken) {
         setLoadingExam(false);
-        setError("Please log in from the homepage with your candidate code first.");
+        setError("请先回到首页，填写昵称进入。");
         return;
       }
 
@@ -95,7 +109,7 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
             return;
           }
 
-          setError("error" in body ? body.error : "Failed to load exam.");
+          setError("error" in body ? body.error : "试卷加载失败。");
           return;
         }
 
@@ -104,7 +118,7 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
         }
       } catch {
         if (!cancelled) {
-          setError("Network error while fetching the exam.");
+          setError("拉取试卷时网络异常。");
         }
       } finally {
         if (!cancelled) {
@@ -137,9 +151,31 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
     setAnswers((current) => ({ ...current, [id]: value }));
   };
 
+  const toggleMultiChoiceAnswer = (id: string, choice: string) => {
+    setAnswers((current) => {
+      const selected = new Set(
+        (current[id] ?? "")
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+      );
+
+      if (selected.has(choice)) {
+        selected.delete(choice);
+      } else {
+        selected.add(choice);
+      }
+
+      return {
+        ...current,
+        [id]: [...selected].sort().join(","),
+      };
+    });
+  };
+
   const submit = async () => {
     if (!exam?.attempt_id) {
-      setError("Exam attempt is not ready yet.");
+      setError("当前答题记录尚未就绪。");
       return;
     }
 
@@ -163,14 +199,14 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
       const body = (await response.json()) as SubmissionResponse | { error: string };
 
       if (!response.ok) {
-        setError("error" in body ? body.error : "Submission failed.");
+        setError("error" in body ? body.error : "提交失败。");
         setResult(null);
         return;
       }
 
       setResult(body as SubmissionResponse);
     } catch {
-      setError("Network error while submitting the answer sheet.");
+      setError("提交答卷时网络异常。");
       setResult(null);
     } finally {
       setLoading(false);
@@ -190,8 +226,7 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
     return (
       <section className="stack">
         <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">Loading Exam</h2>
-          <p className="lede">Generating a randomized paper and starting the timer...</p>
+          <h2 className="section-title">加载中</h2>
         </article>
       </section>
     );
@@ -201,25 +236,25 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
     return (
       <section className="stack">
         <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">Exam Unavailable</h2>
-          <p className="lede">{error ?? "Unable to load the exam attempt."}</p>
+          <h2 className="section-title">无法进入</h2>
+          <p className="lede">{error ?? "无法加载当前答题记录。"}</p>
         </article>
         {result ? (
           <article className="pixel-card pad-lg stack">
-            <h2 className="section-title">Final Result</h2>
+            <h2 className="section-title">最终结果</h2>
             <div className="stat-grid">
               <div className="stat">
-                <p className="stat-label">Status</p>
-                <p className="stat-value">{result.status}</p>
+                <p className="stat-label">状态</p>
+                <p className="stat-value">{submissionStatusLabel(result.status)}</p>
               </div>
               <div className="stat">
-                <p className="stat-label">Score</p>
+                <p className="stat-label">得分</p>
                 <p className="stat-value">
                   {result.score} / {result.total}
                 </p>
               </div>
               <div className="stat">
-                <p className="stat-label">Answer Time</p>
+                <p className="stat-label">答题用时</p>
                 <p className="stat-value">{formatDuration(result.duration_sec)}</p>
               </div>
             </div>
@@ -232,75 +267,69 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
   return (
     <section className="stack">
       <article className="pixel-card pad-lg stack">
-        <h2 className="section-title">Answer Sheet</h2>
+        <h2 className="section-title">答题</h2>
         <div className="stat-grid">
           <div className="stat">
-            <p className="stat-label">Questions</p>
+            <p className="stat-label">题目数</p>
             <p className="stat-value">{exam.questions.length}</p>
           </div>
           <div className="stat">
-            <p className="stat-label">Answered</p>
+            <p className="stat-label">已作答</p>
             <p className="stat-value">{answeredCount}</p>
           </div>
           <div className="stat">
-            <p className="stat-label">Submit URL</p>
-            <p className="stat-value">{exam.submit_url}</p>
+            <p className="stat-label">考生</p>
+            <p className="stat-value">{exam.candidate_name ?? "未知"}</p>
           </div>
           <div className="stat">
-            <p className="stat-label">Attempt</p>
-            <p className="stat-value">{exam.attempt_id}</p>
-          </div>
-          <div className="stat">
-            <p className="stat-label">Candidate</p>
-            <p className="stat-value">{exam.candidate_name ?? "Unknown"}</p>
-          </div>
-          <div className="stat">
-            <p className="stat-label">Time Limit</p>
-            <p className="stat-value">{formatDuration(exam.time_limit_sec)}</p>
-          </div>
-          <div className="stat">
-            <p className="stat-label">Time Left</p>
+            <p className="stat-label">剩余时间</p>
             <p className="stat-value">
               {remainingSec === null ? "--:--" : formatDuration(remainingSec)}
             </p>
           </div>
         </div>
-        <p className="microcopy">
-          Started at (UTC) {exam.started_at}. Expires at (UTC) {exam.expires_at}.
-          Questions and choice options are randomized for each fetched paper.
-        </p>
       </article>
 
       {exam.questions.map((question, index) => (
         <article className="pixel-card pad-lg question-card" key={question.id}>
           <div className="question-header">
-            <span className="question-number">Q{String(index + 1).padStart(2, "0")}</span>
+            <span className="question-number">第 {String(index + 1).padStart(2, "0")} 题</span>
             <span className="pill">{questionTypeLabel(question)}</span>
           </div>
 
           <div className="stack">
             <p className="lede">{question.prompt}</p>
             {question.answer_format_hint ? (
-              <p className="microcopy">Answer format: {question.answer_format_hint}</p>
-            ) : null}
-            {question.verified_at ? (
-              <p className="microcopy">External source verified at: {question.verified_at}</p>
+              <p className="microcopy">{question.answer_format_hint}</p>
             ) : null}
           </div>
 
           {renderQuestionLinks(question)}
 
-          {question.type === "single_choice" ? (
+          {question.type === "single_choice" || question.type === "multiple_choice" ? (
             <div className="options-grid">
               {question.options?.map((option, optionIndex) => {
                 const choice = String.fromCharCode(65 + optionIndex);
-                const selected = (answers[question.id] ?? "").trim().toUpperCase() === choice;
+                const selected =
+                  question.type === "multiple_choice"
+                    ? (answers[question.id] ?? "")
+                        .split(",")
+                        .map((item) => item.trim().toUpperCase())
+                        .includes(choice)
+                    : (answers[question.id] ?? "").trim().toUpperCase() === choice;
 
                 return (
                   <button
                     className={`option-button${selected ? " selected" : ""}`}
                     key={choice}
-                    onClick={() => updateAnswer(question.id, choice)}
+                    onClick={() => {
+                      if (question.type === "multiple_choice") {
+                        toggleMultiChoiceAnswer(question.id, choice);
+                        return;
+                      }
+
+                      updateAnswer(question.id, choice);
+                    }}
                     type="button"
                   >
                     <strong>{choice}</strong>
@@ -309,11 +338,21 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
                 );
               })}
             </div>
+          ) : question.type === "ordered_list" ||
+            question.type === "json_object" ||
+            question.type === "code_patch" ? (
+            <textarea
+              className="answer-input answer-textarea"
+              onChange={(event) => updateAnswer(question.id, event.target.value)}
+              placeholder="输入答案"
+              rows={4}
+              value={answers[question.id] ?? ""}
+            />
           ) : (
             <input
               className="answer-input"
               onChange={(event) => updateAnswer(question.id, event.target.value)}
-              placeholder={question.answer_format_hint ?? "Type your answer"}
+              placeholder="输入答案"
               type="text"
               value={answers[question.id] ?? ""}
             />
@@ -323,37 +362,36 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
 
       <article className="pixel-card pad-lg stack">
         <button className="pixel-button primary" disabled={loading} onClick={submit} type="button">
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? "正在提交..." : "提交答卷"}
         </button>
         {error ? <p className="muted">{error}</p> : null}
       </article>
 
       {result ? (
         <article className="pixel-card pad-lg stack">
-          <h2 className="section-title">Score Report</h2>
+          <h2 className="section-title">成绩报告</h2>
           <div className="stat-grid">
             <div className="stat">
-              <p className="stat-label">Status</p>
-              <p className="stat-value">{result.status}</p>
+              <p className="stat-label">状态</p>
+              <p className="stat-value">{submissionStatusLabel(result.status)}</p>
             </div>
             <div className="stat">
-              <p className="stat-label">Score</p>
+              <p className="stat-label">得分</p>
               <p className="stat-value">
                 {result.score} / {result.total}
               </p>
             </div>
             <div className="stat">
-              <p className="stat-label">Accuracy</p>
+              <p className="stat-label">正确率</p>
               <p className="stat-value">{(result.accuracy * 100).toFixed(0)}%</p>
             </div>
             <div className="stat">
-              <p className="stat-label">Answer Time</p>
+              <p className="stat-label">答题用时</p>
               <p className="stat-value">{formatDuration(result.duration_sec)}</p>
             </div>
           </div>
           <p className="microcopy">
-            Attempt {result.attempt_id}. Started at (UTC) {result.started_at}.
-            Submitted at (UTC) {result.submitted_at}. Record ID: {result.record_id}.
+            已记录最终成绩。
           </p>
           <ul className="result-list">
             {result.results.map((entry) => (
@@ -362,10 +400,10 @@ export function ExamClient({ level }: { level: "level-1" | "level-2" }) {
                 key={entry.id}
               >
                 <p className="result-row">
-                  <strong>{entry.id}</strong> / {entry.correct ? "correct" : "incorrect"}
+                  <strong>{entry.id}</strong> / {entry.correct ? "正确" : "错误"}
                 </p>
-                <p className="result-row">Received: {entry.received || "(blank)"}</p>
-                <p className="result-row">Expected: {entry.expected}</p>
+                <p className="result-row">收到答案：{entry.received || "（空）"}</p>
+                <p className="result-row">标准答案：{entry.expected}</p>
               </li>
             ))}
           </ul>

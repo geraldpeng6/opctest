@@ -1,0 +1,79 @@
+{
+  "exam_id": "level-7-20260707",
+  "title": "第七关：视觉图表",
+  "time_limit_sec": 5400,
+  "submit_url": "/api/submissions",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "single_choice",
+      "prompt": "读取渠道季度图表。全年收入最高的是哪个渠道？",
+      "materials": ["/materials/visual/channel-dashboard"],
+      "options": ["搜索广告", "线下活动", "合作渠道", "邮件召回"]
+    },
+    {
+      "id": "q02",
+      "type": "integer",
+      "prompt": "读取渠道季度图表。四个渠道第四季度收入合计是多少？",
+      "materials": ["/materials/visual/channel-dashboard"],
+      "answer_format_hint": "只填整数。"
+    },
+    {
+      "id": "q03",
+      "type": "multiple_choice",
+      "prompt": "读取渠道季度图表。哪些渠道同时满足第四季度高于第一季度，且全年收入至少 100？",
+      "materials": ["/materials/visual/channel-dashboard"],
+      "options": ["搜索广告", "线下活动", "合作渠道", "邮件召回"],
+      "answer_format_hint": "多选，直接点选所有符合项。"
+    },
+    {
+      "id": "q04",
+      "type": "decimal",
+      "prompt": "读取转化漏斗表。定价页付费人数除以访问人数，百分比是多少？",
+      "materials": ["/materials/visual/conversion-funnel"],
+      "answer_format_hint": "填百分数数字，不带百分号。"
+    },
+    {
+      "id": "q05",
+      "type": "ordered_list",
+      "prompt": "读取项目时间线。按真实发生时间排列：A 模型训练，B 需求冻结，C 数据到位，D 发布。",
+      "materials": ["/materials/visual/project-timeline"],
+      "answer_format_hint": "按顺序输入字母，例如 A,B,C,D。"
+    },
+    {
+      "id": "q06",
+      "type": "ordered_list",
+      "prompt": "读取调用网络。入口到展示的最低延迟路径，除入口和展示外，中间节点依次是什么？",
+      "materials": ["/materials/visual/service-network"],
+      "answer_format_hint": "按顺序输入节点名。"
+    },
+    {
+      "id": "q07",
+      "type": "integer",
+      "prompt": "读取热力矩阵。数值大于等于 80 的格子共有几个？",
+      "materials": ["/materials/visual/heatmap-grid"],
+      "answer_format_hint": "只填整数。"
+    },
+    {
+      "id": "q08",
+      "type": "json_object",
+      "prompt": "读取调用网络。用 JSON 输出最低延迟路径和总延迟。",
+      "materials": ["/materials/visual/service-network"],
+      "answer_format_hint": "格式：{\"path\":\"入口>画像>排序>展示\",\"latency\":22}"
+    },
+    {
+      "id": "q09",
+      "type": "date_yyyymmdd",
+      "prompt": "读取项目时间线。正式发布是哪一天？",
+      "materials": ["/materials/visual/project-timeline"],
+      "answer_format_hint": "使用 YYYYMMDD。"
+    },
+    {
+      "id": "q10",
+      "type": "multiple_choice",
+      "prompt": "读取转化漏斗表。哪些页面同时满足付费率至少 4%，且错误数不超过 8？",
+      "materials": ["/materials/visual/conversion-funnel"],
+      "options": ["首页", "文档页", "定价页", "社区页"]
+    }
+  ]
+}

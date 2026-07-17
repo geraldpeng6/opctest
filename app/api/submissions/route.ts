@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     payload = (await request.json()) as SubmissionPayload;
   } catch {
     return NextResponse.json(
-      { error: "Invalid JSON payload." },
+      { error: "请求正文不是有效结构化数据。" },
       { status: 400 },
     );
   }
@@ -29,12 +29,12 @@ export async function POST(request: Request) {
     const attempt = getStoredAttempt(payload.attempt_id);
 
     if (!attempt) {
-      return NextResponse.json({ error: "Unknown attempt_id." }, { status: 400 });
+      return NextResponse.json({ error: "未知答题记录编号。" }, { status: 400 });
     }
 
     if (attempt.candidate_id !== candidate.candidate_id) {
       return NextResponse.json(
-        { error: "This attempt does not belong to the authenticated candidate." },
+        { error: "这次答题记录不属于当前认证考生。" },
         { status: 403 },
       );
     }
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "Unexpected error while grading submission." },
+      { error: "判分时出现意外错误。" },
       { status: 500 },
     );
   }

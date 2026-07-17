@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-4-20260707",
+  "answers": {
+    "q01": "search-indexer",
+    "q02": "CACHE_TTL_SECONDS",
+    "q03": "partner-rate-limit",
+    "q04": "idx_orders_customer_created_at",
+    "q05": "SCALE-CONSUMERS",
+    "q06": "order_total_cents",
+    "q07": "数据库演练",
+    "q08": "3",
+    "q09": "6",
+    "q10": "回滚到直写"
+  },
+  "normalizers": {
+    "q01": "exact_text",
+    "q02": "exact_text",
+    "q03": "exact_text",
+    "q04": "exact_text",
+    "q05": "exact_text",
+    "q06": "exact_text",
+    "q07": "exact_text",
+    "q08": "integer",
+    "q09": "integer",
+    "q10": "exact_text"
+  }
+}

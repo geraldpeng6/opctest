@@ -1,0 +1,27 @@
+{
+  "exam_id": "level-9-20260707",
+  "answers": {
+    "q01": "PATCH-C",
+    "q02": "B,C",
+    "q03": "B,A,D,C",
+    "q04": "A",
+    "q05": "7",
+    "q06": "zod",
+    "q07": "A,B",
+    "q08": "PATCH-B",
+    "q09": "{\"name\":\"样例\",\"items\":[\"A1\"]}",
+    "q10": "A,C,B,D"
+  },
+  "normalizers": {
+    "q01": "code_patch",
+    "q02": "multiple_choice",
+    "q03": "ordered_list",
+    "q04": "single_choice",
+    "q05": "integer",
+    "q06": "exact_text",
+    "q07": "multiple_choice",
+    "q08": "code_patch",
+    "q09": "json_object",
+    "q10": "ordered_list"
+  }
+}

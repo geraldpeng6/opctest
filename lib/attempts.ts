@@ -22,8 +22,6 @@ import type {
   SubmissionRecord,
 } from "@/lib/types";
 
-const DEFAULT_TIME_LIMIT_SEC = 30 * 60;
-
 export class AttemptAlreadySubmittedError extends Error {}
 export class LevelAlreadyFinalizedError extends Error {
   result?: SubmissionRecord;
@@ -155,7 +153,7 @@ export function persistFinalSubmission(record: SubmissionRecord) {
     });
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "EEXIST") {
-      throw new AttemptAlreadySubmittedError("This exam attempt has already been submitted.");
+      throw new AttemptAlreadySubmittedError("这次答题记录已经提交过。");
     }
     throw error;
   }
@@ -166,7 +164,7 @@ export function persistFinalSubmission(record: SubmissionRecord) {
 function finalizeExpiredAttempt(attempt: StoredAttempt, nowMs: number) {
   const existing = getFinalSubmission(attempt.candidate_id, attempt.level);
   if (existing) {
-    throw new LevelAlreadyFinalizedError("This level has already been finalized.", existing);
+    throw new LevelAlreadyFinalizedError("这一关已经定稿。", existing);
   }
 
   const record: SubmissionRecord = {
@@ -199,7 +197,7 @@ function finalizeExpiredAttempt(attempt: StoredAttempt, nowMs: number) {
   persistFinalSubmission(record);
   unlinkSync(activeAttemptPath(attempt.candidate_id, attempt.level));
   throw new LevelAlreadyFinalizedError(
-    "This level timed out and has been finalized as absent.",
+    "这一关已超时，并已按缺考定稿。",
     record,
   );
 }
@@ -212,13 +210,13 @@ export function createOrLoadAttemptForCandidate(
 ): PublicExam {
   const existingFinal = getFinalSubmission(candidate.candidate_id, level);
   if (existingFinal) {
-    throw new LevelAlreadyFinalizedError("This level has already been finalized.", existingFinal);
+    throw new LevelAlreadyFinalizedError("这一关已经定稿。", existingFinal);
   }
 
   const activeAttempt = getStoredAttemptByCandidate(candidate.candidate_id, level);
   const exam = getPublicExam(level);
   if (!exam) {
-    throw new Error(`Unknown level: ${level}`);
+    throw new Error(`未知关卡：${level}`);
   }
 
   if (activeAttempt) {
@@ -230,7 +228,7 @@ export function createOrLoadAttemptForCandidate(
 
   const answerKey = getAnswerKeyByExamId(exam.exam_id);
   if (!answerKey) {
-    throw new Error(`Missing answer key for ${exam.exam_id}`);
+    throw new Error(`缺少 ${exam.exam_id} 的答案键。`);
   }
 
   const randomizedQuestions = shuffleArray(exam.questions, random).map((question) =>
@@ -245,8 +243,8 @@ export function createOrLoadAttemptForCandidate(
     level,
     exam_id: exam.exam_id,
     started_at: new Date(nowMs).toISOString(),
-    expires_at: new Date(nowMs + DEFAULT_TIME_LIMIT_SEC * 1000).toISOString(),
-    time_limit_sec: DEFAULT_TIME_LIMIT_SEC,
+    expires_at: new Date(nowMs + exam.time_limit_sec * 1000).toISOString(),
+    time_limit_sec: exam.time_limit_sec,
     questions: randomizedQuestions.map((entry) => entry.question),
     answer_key: Object.fromEntries(randomizedQuestions.map((entry) => [entry.question.id, entry.expected])),
     normalizers: answerKey.normalizers,
@@ -257,5 +255,5 @@ export function createOrLoadAttemptForCandidate(
 }
 
 export function getAttemptTimeLimitSec() {
-  return DEFAULT_TIME_LIMIT_SEC;
+  return getPublicExam("level-1")?.time_limit_sec ?? 30 * 60;
 }

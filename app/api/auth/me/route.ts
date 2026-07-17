@@ -12,6 +12,6 @@ export function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
-    return NextResponse.json({ error: "Unexpected session error." }, { status: 500 });
+    return NextResponse.json({ error: "读取会话时出现意外错误。" }, { status: 500 });
   }
 }

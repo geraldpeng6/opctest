@@ -1,0 +1,9 @@
+{
+  "rows": [
+    { "sku": "AX-10", "counted": 120, "expected": 118, "discrepancy": 2 },
+    { "sku": "BZ-88", "counted": 77, "expected": 81, "discrepancy": 4 },
+    { "sku": "CR-22", "counted": 44, "expected": 50, "discrepancy": 6 },
+    { "sku": "WX-55", "counted": 91, "expected": 105, "discrepancy": 14 },
+    { "sku": "LQ-71", "counted": 63, "expected": 54, "discrepancy": 9 }
+  ]
+}
