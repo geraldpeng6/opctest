@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    return NextResponse.json(loginWithName(payload));
+    return NextResponse.json(await loginWithName(payload));
   } catch (error) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: 400 });

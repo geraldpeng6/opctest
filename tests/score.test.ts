@@ -38,23 +38,23 @@ test("答案归一化能处理新增题型", () => {
   assert.equal(normalizeAnswer(" patch-b ", "code_patch"), "PATCH-B");
 });
 
-test("提交判分会返回预期成绩结构", () => {
+test("提交判分会返回预期成绩结构", async () => {
   const dir = withRuntimeDir();
 
-  const auth = loginWithName({
+  const auth = await loginWithName({
     name: "壬九",
   }, Date.UTC(2026, 3, 24, 10, 0, 0));
 
-  const exam = createOrLoadAttemptForCandidate(
+  const exam = await createOrLoadAttemptForCandidate(
     "level-1",
     auth.candidate,
     Date.UTC(2026, 3, 24, 10, 0, 0),
     () => 0.24,
   );
-  const attempt = getStoredAttempt(exam.attempt_id!);
+  const attempt = await getStoredAttempt(exam.attempt_id!);
   assert.ok(attempt);
 
-  const graded = scoreSubmission(
+  const graded = await scoreSubmission(
     {
       exam_id: exam.exam_id,
       attempt_id: exam.attempt_id!,

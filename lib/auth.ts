@@ -1,9 +1,16 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-import { getFinalSubmission, didPassLevel } from "@/lib/results";
+import {
+  deleteD1Record,
+  getD1Record,
+  hasD1Database,
+  listD1Records,
+  putD1Record,
+} from "@/lib/d1-records";
 import { LEVELS, previousLevel, unlockedLevelsFromMaxLevel } from "@/lib/levels";
+import { getFinalSubmission, didPassLevel } from "@/lib/results";
 import {
   createSessionToken,
   hashSessionToken,
@@ -46,6 +53,10 @@ function sessionPath(tokenHash: string) {
   return join(sessionsDir(), `${tokenHash}.json`);
 }
 
+function candidateKey(name: string) {
+  return name.toLowerCase();
+}
+
 export function loadRegistry(): CandidateRegistry {
   const filePath = registryPath();
   if (!existsSync(filePath)) {
@@ -72,12 +83,17 @@ export function createCandidateRecord(name: string, maxLevel: number, nowIso: st
   } satisfies CandidateRecord;
 }
 
-export function getCandidateById(candidateId: string) {
+export async function getCandidateById(candidateId: string) {
+  if (hasD1Database()) {
+    // ponytail: linear scan is enough for this small benchmark; add an indexed candidate table if volume grows.
+    const candidates = await listD1Records<CandidateRecord>("candidate");
+    return candidates.find((candidate) => candidate.candidate_id === candidateId) ?? null;
+  }
   return loadRegistry().candidates.find((candidate) => candidate.candidate_id === candidateId) ?? null;
 }
 
 function findCandidateByName(name: string, registry: CandidateRegistry) {
-  const normalizedName = name.toLowerCase();
+  const normalizedName = candidateKey(name);
   return (
     registry.candidates.find(
       (candidate) => candidate.name?.toLowerCase() === normalizedName,
@@ -85,13 +101,12 @@ function findCandidateByName(name: string, registry: CandidateRegistry) {
   );
 }
 
-function buildCandidateSummary(candidate: CandidateRecord): CandidateSummary {
-  const passedLevels = LEVELS.filter((level) =>
-    didPassLevel(getFinalSubmission(candidate.candidate_id, level)),
+async function buildCandidateSummary(candidate: CandidateRecord): Promise<CandidateSummary> {
+  const finals = await Promise.all(
+    LEVELS.map((level) => getFinalSubmission(candidate.candidate_id, level)),
   );
-  const finalizedLevels = LEVELS.filter((level) =>
-    getFinalSubmission(candidate.candidate_id, level) !== null,
-  );
+  const passedLevels = LEVELS.filter((_, index) => didPassLevel(finals[index]));
+  const finalizedLevels = LEVELS.filter((_, index) => finals[index] !== null);
   const unlockedByMaxLevel = unlockedLevelsFromMaxLevel(candidate.max_level);
   const unlockedLevels = unlockedByMaxLevel.filter((level) => {
     const prev = previousLevel(level);
@@ -108,7 +123,7 @@ function buildCandidateSummary(candidate: CandidateRecord): CandidateSummary {
   };
 }
 
-function createStoredSession(candidateId: string, nowMs: number) {
+async function createStoredSession(candidateId: string, nowMs: number) {
   const token = createSessionToken();
   const tokenHash = hashSessionToken(token);
   const record: SessionRecord = {
@@ -119,59 +134,98 @@ function createStoredSession(candidateId: string, nowMs: number) {
     expires_at: new Date(nowMs + SESSION_TTL_SEC * 1000).toISOString(),
   };
 
-  writeFileSync(sessionPath(tokenHash), JSON.stringify(record, null, 2));
+  if (hasD1Database()) {
+    await putD1Record("session", tokenHash, record);
+  } else {
+    writeFileSync(sessionPath(tokenHash), JSON.stringify(record, null, 2));
+  }
   return token;
 }
 
-export function loginWithName(
+export async function loginWithName(
   payload: AuthLoginPayload,
   nowMs = Date.now(),
-): AuthLoginResponse {
+): Promise<AuthLoginResponse> {
   const nickname = normalizeNickname(payload.name ?? "");
   if (!nickname) {
     throw new AuthError("必须填写昵称。");
   }
 
-  const registry = loadRegistry();
-  let candidate = findCandidateByName(nickname, registry);
+  let candidate: CandidateRecord | null;
+  if (hasD1Database()) {
+    const key = candidateKey(nickname);
+    candidate = await getD1Record<CandidateRecord>("candidate", key);
+    if (!candidate) {
+      const proposed = createCandidateRecord(
+        nickname,
+        LEVELS.length,
+        new Date(nowMs).toISOString(),
+      );
+      await putD1Record("candidate", key, proposed, true);
+      candidate = await getD1Record<CandidateRecord>("candidate", key);
+    }
+  } else {
+    const registry = loadRegistry();
+    candidate = findCandidateByName(nickname, registry);
+    if (!candidate) {
+      candidate = createCandidateRecord(
+        nickname,
+        LEVELS.length,
+        new Date(nowMs).toISOString(),
+      );
+      registry.candidates.push(candidate);
+      saveRegistry(registry);
+    }
+  }
 
   if (!candidate) {
-    candidate = createCandidateRecord(nickname, LEVELS.length, new Date(nowMs).toISOString());
-    registry.candidates.push(candidate);
-    saveRegistry(registry);
+    throw new Error("无法创建考生记录。");
   }
 
   return {
-    session_token: createStoredSession(candidate.candidate_id, nowMs),
-    candidate: buildCandidateSummary(candidate),
+    session_token: await createStoredSession(candidate.candidate_id, nowMs),
+    candidate: await buildCandidateSummary(candidate),
   };
 }
 
-function loadSessionByToken(token: string) {
+async function loadSessionByToken(token: string) {
   if (!token) {
     return null;
   }
 
-  const filePath = sessionPath(hashSessionToken(token));
-  if (!existsSync(filePath)) {
-    return null;
+  const tokenHash = hashSessionToken(token);
+  let record: SessionRecord | null;
+  if (hasD1Database()) {
+    record = await getD1Record<SessionRecord>("session", tokenHash);
+  } else {
+    const filePath = sessionPath(tokenHash);
+    if (!existsSync(filePath)) {
+      return null;
+    }
+    record = JSON.parse(readFileSync(filePath, "utf8")) as SessionRecord;
   }
 
-  const record = JSON.parse(readFileSync(filePath, "utf8")) as SessionRecord;
+  if (!record) {
+    return null;
+  }
   if (Date.now() > new Date(record.expires_at).getTime()) {
-    unlinkSync(filePath);
+    if (hasD1Database()) {
+      await deleteD1Record("session", tokenHash);
+    } else {
+      unlinkSync(sessionPath(tokenHash));
+    }
     return null;
   }
   return record;
 }
 
-export function getCandidateSummaryFromToken(token: string) {
-  const session = loadSessionByToken(token);
+export async function getCandidateSummaryFromToken(token: string) {
+  const session = await loadSessionByToken(token);
   if (!session) {
     throw new AuthorizationError("会话令牌无效或已过期。");
   }
 
-  const candidate = getCandidateById(session.candidate_id);
+  const candidate = await getCandidateById(session.candidate_id);
   if (!candidate) {
     throw new AuthorizationError("找不到该考生会话。");
   }
@@ -179,21 +233,24 @@ export function getCandidateSummaryFromToken(token: string) {
   return buildCandidateSummary(candidate);
 }
 
-export function getAuthMeResponse(token: string): AuthMeResponse {
+export async function getAuthMeResponse(token: string): Promise<AuthMeResponse> {
   return {
-    candidate: getCandidateSummaryFromToken(token),
+    candidate: await getCandidateSummaryFromToken(token),
   };
 }
 
-export function ensureLevelAccess(token: string, level: ExamLevel) {
-  const candidate = getCandidateSummaryFromToken(token);
+export async function ensureLevelAccess(token: string, level: ExamLevel) {
+  const candidate = await getCandidateSummaryFromToken(token);
   if (!candidate.unlocked_levels.includes(level)) {
     throw new AuthorizationError(`该考生尚未解锁 ${level}。`);
   }
   return candidate;
 }
 
-export function listActiveSessions() {
+export async function listActiveSessions() {
+  if (hasD1Database()) {
+    return listD1Records<SessionRecord>("session");
+  }
   return readdirSync(sessionsDir())
     .filter((file) => file.endsWith(".json"))
     .map((file) =>

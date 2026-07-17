@@ -70,7 +70,7 @@ async function submitAllCorrect(token: string, url: string, examGetter: ExamGett
     }),
   );
   const examPayload = await examResponse.json();
-  const attempt = getStoredAttempt(examPayload.attempt_id);
+  const attempt = await getStoredAttempt(examPayload.attempt_id);
   assert.ok(attempt);
 
   const response = await postSubmission(
@@ -106,7 +106,7 @@ test("考生可以填写昵称、读取本人信息并读取第一关试卷", as
   assert.equal(loginResult.payload.candidate.max_level, 10);
 
   const token = loginResult.payload.session_token as string;
-  const meResponse = meRoute(
+  const meResponse = await meRoute(
     new Request("http://localhost:3000/api/auth/me", {
       headers: authHeaders(token),
     }),
@@ -115,7 +115,7 @@ test("考生可以填写昵称、读取本人信息并读取第一关试卷", as
   assert.equal(meResponse.status, 200);
   assert.deepEqual(mePayload.candidate.unlocked_levels, ["level-1"]);
 
-  const examResponse = getLevel1Exam(
+  const examResponse = await getLevel1Exam(
     new Request("http://localhost:3000/api/exams/level-1", {
       headers: authHeaders(token),
     }),
@@ -135,7 +135,7 @@ test("通过第一关前第二关保持锁定", async () => {
   const loginResult = await login("乙二");
   const token = loginResult.payload.session_token as string;
 
-  const response = getLevel2Exam(
+  const response = await getLevel2Exam(
     new Request("http://localhost:3000/api/exams/level-2", {
       headers: authHeaders(token),
     }),
@@ -153,7 +153,7 @@ test("通过第二关前第三关保持锁定", async () => {
   const loginResult = await login("丙三");
   const token = loginResult.payload.session_token as string;
 
-  const response = getLevel3Exam(
+  const response = await getLevel3Exam(
     new Request("http://localhost:3000/api/exams/level-3", {
       headers: authHeaders(token),
     }),
@@ -171,13 +171,13 @@ test("提交后记录最终结果，并在通过第一关后解锁第二关", as
   const loginResult = await login("丁四");
   const token = loginResult.payload.session_token as string;
 
-  const examResponse = getLevel1Exam(
+  const examResponse = await getLevel1Exam(
     new Request("http://localhost:3000/api/exams/level-1", {
       headers: authHeaders(token),
     }),
   );
   const examPayload = await examResponse.json();
-  const attempt = getStoredAttempt(examPayload.attempt_id);
+  const attempt = await getStoredAttempt(examPayload.attempt_id);
   assert.ok(attempt);
 
   const answers = Object.fromEntries(
@@ -203,7 +203,7 @@ test("提交后记录最终结果，并在通过第一关后解锁第二关", as
   assert.equal(submitResponse.status, 200);
   assert.equal(submitPayload.score, 10);
 
-  const meResponse = meRoute(
+  const meResponse = await meRoute(
     new Request("http://localhost:3000/api/auth/me", {
       headers: authHeaders(token),
     }),
@@ -224,7 +224,7 @@ test("同一考生不能重复提交同一关", async () => {
   const loginResult = await login("戊五");
   const token = loginResult.payload.session_token as string;
 
-  const examResponse = getLevel1Exam(
+  const examResponse = await getLevel1Exam(
     new Request("http://localhost:3000/api/exams/level-1", {
       headers: authHeaders(token),
     }),
@@ -248,7 +248,7 @@ test("同一考生不能重复提交同一关", async () => {
     }),
   );
 
-  const second = getLevel1Exam(
+  const second = await getLevel1Exam(
     new Request("http://localhost:3000/api/exams/level-1", {
       headers: authHeaders(token),
     }),
@@ -278,13 +278,13 @@ test("排行榜公开昵称但不泄露会话令牌", async () => {
 
   const loginResult = await login("庚七");
   const token = loginResult.payload.session_token as string;
-  const examResponse = getLevel1Exam(
+  const examResponse = await getLevel1Exam(
     new Request("http://localhost:3000/api/exams/level-1", {
       headers: authHeaders(token),
     }),
   );
   const examPayload = await examResponse.json();
-  const attempt = getStoredAttempt(examPayload.attempt_id);
+  const attempt = await getStoredAttempt(examPayload.attempt_id);
 
   await postSubmission(
     new Request("http://localhost:3000/api/submissions", {
@@ -303,7 +303,7 @@ test("排行榜公开昵称但不泄露会话令牌", async () => {
     }),
   );
 
-  const leaderboardResponse = leaderboardRoute();
+  const leaderboardResponse = await leaderboardRoute();
   const leaderboardPayload = await leaderboardResponse.json();
 
   assert.equal(leaderboardResponse.status, 200);
@@ -324,7 +324,7 @@ test("基础关卡按顺序解锁，并保持第三关限时配置", async () =>
   const level2 = await submitAllCorrect(token, "http://localhost:3000/api/exams/level-2", getLevel2Exam);
   assert.equal(level2.response.status, 200);
 
-  const meResponse = meRoute(
+  const meResponse = await meRoute(
     new Request("http://localhost:3000/api/auth/me", {
       headers: authHeaders(token),
     }),
@@ -332,7 +332,7 @@ test("基础关卡按顺序解锁，并保持第三关限时配置", async () =>
   const mePayload = await meResponse.json();
   assert.deepEqual(mePayload.candidate.unlocked_levels, ["level-1", "level-2", "level-3"]);
 
-  const level3Response = getLevel3Exam(
+  const level3Response = await getLevel3Exam(
     new Request("http://localhost:3000/api/exams/level-3", {
       headers: authHeaders(token),
     }),
@@ -352,7 +352,7 @@ test("新增专业关卡按顺序解锁，并能创建对应试卷", async () =>
   const loginResult = await login("癸十");
   const token = loginResult.payload.session_token as string;
 
-  const lockedLevel4 = getLevel4Exam(
+  const lockedLevel4 = await getLevel4Exam(
     new Request("http://localhost:3000/api/exams/level-4", {
       headers: authHeaders(token),
     }),
@@ -377,7 +377,7 @@ test("新增专业关卡按顺序解锁，并能创建对应试卷", async () =>
   assert.equal(level5.examPayload.questions.length, 10);
   assert.equal(level5.examPayload.time_limit_sec, 3600);
 
-  const level6Response = getLevel6Exam(
+  const level6Response = await getLevel6Exam(
     new Request("http://localhost:3000/api/exams/level-6", {
       headers: authHeaders(token),
     }),
@@ -388,7 +388,7 @@ test("新增专业关卡按顺序解锁，并能创建对应试卷", async () =>
   assert.equal(level6Payload.questions.length, 10);
   assert.equal(level6Payload.time_limit_sec, 4500);
 
-  const meResponse = meRoute(
+  const meResponse = await meRoute(
     new Request("http://localhost:3000/api/auth/me", {
       headers: authHeaders(token),
     }),
@@ -412,7 +412,7 @@ test("新增题型关卡按顺序解锁，并覆盖多选、排序、JSON 和补
   const loginResult = await login("子一");
   const token = loginResult.payload.session_token as string;
 
-  const lockedLevel7 = getLevel7Exam(
+  const lockedLevel7 = await getLevel7Exam(
     new Request("http://localhost:3000/api/exams/level-7", {
       headers: authHeaders(token),
     }),
@@ -445,7 +445,7 @@ test("新增题型关卡按顺序解锁，并覆盖多选、排序、JSON 和补
   assert.equal(level9.examPayload.exam_id, "level-9-20260707");
   assert.equal(level9.examPayload.questions.some((question: { type: string }) => question.type === "code_patch"), true);
 
-  const level10Response = getLevel10Exam(
+  const level10Response = await getLevel10Exam(
     new Request("http://localhost:3000/api/exams/level-10", {
       headers: authHeaders(token),
     }),
@@ -455,7 +455,7 @@ test("新增题型关卡按顺序解锁，并覆盖多选、排序、JSON 和补
   assert.equal(level10Payload.exam_id, "level-10-20260707");
   assert.equal(level10Payload.time_limit_sec, 9000);
 
-  const meResponse = meRoute(
+  const meResponse = await meRoute(
     new Request("http://localhost:3000/api/auth/me", {
       headers: authHeaders(token),
     }),

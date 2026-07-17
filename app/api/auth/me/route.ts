@@ -3,10 +3,10 @@ import { NextResponse } from "next/server";
 import { AuthorizationError, getAuthMeResponse } from "@/lib/auth";
 import { requireBearerToken } from "@/lib/request-auth";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   try {
     const token = requireBearerToken(request);
-    return NextResponse.json(getAuthMeResponse(token));
+    return NextResponse.json(await getAuthMeResponse(token));
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

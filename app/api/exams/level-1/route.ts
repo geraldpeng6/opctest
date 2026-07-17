@@ -4,11 +4,11 @@ import { AuthorizationError, ensureLevelAccess } from "@/lib/auth";
 import { createOrLoadAttemptForCandidate, LevelAlreadyFinalizedError } from "@/lib/attempts";
 import { requireBearerToken } from "@/lib/request-auth";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   try {
     const token = requireBearerToken(request);
-    const candidate = ensureLevelAccess(token, "level-1");
-    return NextResponse.json(createOrLoadAttemptForCandidate("level-1", candidate));
+    const candidate = await ensureLevelAccess(token, "level-1");
+    return NextResponse.json(await createOrLoadAttemptForCandidate("level-1", candidate));
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return NextResponse.json({ error: error.message }, { status: 401 });

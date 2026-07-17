@@ -1,7 +1,6 @@
 import {
   appendFileSync,
   existsSync,
-  mkdirSync,
   readFileSync,
   readdirSync,
   unlinkSync,
@@ -10,6 +9,13 @@ import {
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
 
+import {
+  deleteD1Record,
+  getD1Record,
+  hasD1Database,
+  listD1Records,
+  putD1Record,
+} from "@/lib/d1-records";
 import { getAnswerKeyByExamId, getPublicExam } from "@/lib/exams";
 import { ensureRuntimeDir } from "@/lib/runtime-paths";
 import { persistFinalLevelSubmission, getFinalSubmission } from "@/lib/results";
@@ -40,8 +46,12 @@ function recordsDir() {
   return ensureRuntimeDir("records");
 }
 
+function activeAttemptKey(candidateId: string, level: ExamLevel) {
+  return `${candidateId}__${level}`;
+}
+
 function activeAttemptPath(candidateId: string, level: ExamLevel) {
-  return join(attemptsDir(), `${candidateId}__${level}.json`);
+  return join(attemptsDir(), `${activeAttemptKey(candidateId, level)}.json`);
 }
 
 function finalAttemptPath(attemptId: string) {
@@ -105,7 +115,10 @@ function publicExamFromAttempt(attempt: StoredAttempt, title: string): PublicExa
   };
 }
 
-export function getStoredAttemptByCandidate(candidateId: string, level: ExamLevel) {
+export async function getStoredAttemptByCandidate(candidateId: string, level: ExamLevel) {
+  if (hasD1Database()) {
+    return getD1Record<StoredAttempt>("attempt", activeAttemptKey(candidateId, level));
+  }
   const filePath = activeAttemptPath(candidateId, level);
   if (!existsSync(filePath)) {
     return null;
@@ -113,23 +126,31 @@ export function getStoredAttemptByCandidate(candidateId: string, level: ExamLeve
   return JSON.parse(readFileSync(filePath, "utf8")) as StoredAttempt;
 }
 
-export function getStoredAttemptById(attemptId: string) {
-  return loadAllAttempts().find((attempt) => attempt.attempt_id === attemptId) ?? null;
-}
-
-function loadAllAttempts() {
+function loadAllFileAttempts() {
   return readdirSync(attemptsDir())
-    .filter((file: string) => file.endsWith(".json"))
-    .map((file: string) =>
+    .filter((file) => file.endsWith(".json"))
+    .map((file) =>
       JSON.parse(readFileSync(join(attemptsDir(), file), "utf8")) as StoredAttempt,
     );
+}
+
+export async function getStoredAttemptById(attemptId: string) {
+  // ponytail: scans active attempts; add an indexed D1 column if concurrent volume grows.
+  const attempts = hasD1Database()
+    ? await listD1Records<StoredAttempt>("attempt")
+    : loadAllFileAttempts();
+  return attempts.find((attempt) => attempt.attempt_id === attemptId) ?? null;
 }
 
 export function getStoredAttempt(attemptId: string) {
   return getStoredAttemptById(attemptId);
 }
 
-export function clearStoredAttempt(attempt: StoredAttempt) {
+export async function clearStoredAttempt(attempt: StoredAttempt) {
+  if (hasD1Database()) {
+    await deleteD1Record("attempt", activeAttemptKey(attempt.candidate_id, attempt.level));
+    return;
+  }
   const filePath = activeAttemptPath(attempt.candidate_id, attempt.level);
   if (existsSync(filePath)) {
     unlinkSync(filePath);
@@ -140,29 +161,28 @@ export function createSubmissionRecordId() {
   return randomUUID();
 }
 
-export function appendSubmissionRecord(record: SubmissionRecord) {
-  const filePath = join(recordsDir(), "submissions.jsonl");
-  appendFileSync(filePath, `${JSON.stringify(record)}\n`);
-}
-
-export function persistFinalSubmission(record: SubmissionRecord) {
+export async function persistFinalSubmission(record: SubmissionRecord) {
   try {
-    persistFinalLevelSubmission(record);
-    writeFileSync(finalAttemptPath(record.attempt_id), JSON.stringify(record, null, 2), {
-      flag: "wx",
-    });
+    await persistFinalLevelSubmission(record);
+    if (!hasD1Database()) {
+      writeFileSync(finalAttemptPath(record.attempt_id), JSON.stringify(record, null, 2), {
+        flag: "wx",
+      });
+      appendFileSync(
+        join(recordsDir(), "submissions.jsonl"),
+        `${JSON.stringify(record)}\n`,
+      );
+    }
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "EEXIST") {
       throw new AttemptAlreadySubmittedError("这次答题记录已经提交过。");
     }
     throw error;
   }
-
-  appendSubmissionRecord(record);
 }
 
-function finalizeExpiredAttempt(attempt: StoredAttempt, nowMs: number) {
-  const existing = getFinalSubmission(attempt.candidate_id, attempt.level);
+async function finalizeExpiredAttempt(attempt: StoredAttempt, nowMs: number) {
+  const existing = await getFinalSubmission(attempt.candidate_id, attempt.level);
   if (existing) {
     throw new LevelAlreadyFinalizedError("这一关已经定稿。", existing);
   }
@@ -194,26 +214,26 @@ function finalizeExpiredAttempt(attempt: StoredAttempt, nowMs: number) {
     })),
   };
 
-  persistFinalSubmission(record);
-  unlinkSync(activeAttemptPath(attempt.candidate_id, attempt.level));
+  await persistFinalSubmission(record);
+  await clearStoredAttempt(attempt);
   throw new LevelAlreadyFinalizedError(
     "这一关已超时，并已按缺考定稿。",
     record,
   );
 }
 
-export function createOrLoadAttemptForCandidate(
+export async function createOrLoadAttemptForCandidate(
   level: ExamLevel,
   candidate: CandidateSummary,
   nowMs = Date.now(),
   random: () => number = Math.random,
-): PublicExam {
-  const existingFinal = getFinalSubmission(candidate.candidate_id, level);
+): Promise<PublicExam> {
+  const existingFinal = await getFinalSubmission(candidate.candidate_id, level);
   if (existingFinal) {
     throw new LevelAlreadyFinalizedError("这一关已经定稿。", existingFinal);
   }
 
-  const activeAttempt = getStoredAttemptByCandidate(candidate.candidate_id, level);
+  const activeAttempt = await getStoredAttemptByCandidate(candidate.candidate_id, level);
   const exam = getPublicExam(level);
   if (!exam) {
     throw new Error(`未知关卡：${level}`);
@@ -221,7 +241,7 @@ export function createOrLoadAttemptForCandidate(
 
   if (activeAttempt) {
     if (nowMs > new Date(activeAttempt.expires_at).getTime()) {
-      finalizeExpiredAttempt(activeAttempt, nowMs);
+      await finalizeExpiredAttempt(activeAttempt, nowMs);
     }
     return publicExamFromAttempt(activeAttempt, exam.title);
   }
@@ -234,10 +254,8 @@ export function createOrLoadAttemptForCandidate(
   const randomizedQuestions = shuffleArray(exam.questions, random).map((question) =>
     randomizeQuestion(question, answerKey.answers[question.id], random),
   );
-
-  const attemptId = randomUUID();
   const attempt: StoredAttempt = {
-    attempt_id: attemptId,
+    attempt_id: randomUUID(),
     candidate_id: candidate.candidate_id,
     candidate_name: candidate.name,
     level,
@@ -250,7 +268,21 @@ export function createOrLoadAttemptForCandidate(
     normalizers: answerKey.normalizers,
   };
 
-  writeFileSync(activeAttemptPath(candidate.candidate_id, level), JSON.stringify(attempt, null, 2));
+  if (hasD1Database()) {
+    const key = activeAttemptKey(candidate.candidate_id, level);
+    const inserted = await putD1Record("attempt", key, attempt, true);
+    if (!inserted) {
+      const concurrentAttempt = await getD1Record<StoredAttempt>("attempt", key);
+      if (concurrentAttempt) {
+        return publicExamFromAttempt(concurrentAttempt, exam.title);
+      }
+    }
+  } else {
+    writeFileSync(
+      activeAttemptPath(candidate.candidate_id, level),
+      JSON.stringify(attempt, null, 2),
+    );
+  }
   return publicExamFromAttempt(attempt, exam.title);
 }
 

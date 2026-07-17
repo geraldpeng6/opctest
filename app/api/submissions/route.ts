@@ -25,8 +25,8 @@ export async function POST(request: Request) {
 
   try {
     const token = requireBearerToken(request);
-    const candidate = getCandidateSummaryFromToken(token);
-    const attempt = getStoredAttempt(payload.attempt_id);
+    const candidate = await getCandidateSummaryFromToken(token);
+    const attempt = await getStoredAttempt(payload.attempt_id);
 
     if (!attempt) {
       return NextResponse.json({ error: "未知答题记录编号。" }, { status: 400 });
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = scoreSubmission(payload);
+    const response = await scoreSubmission(payload);
     return NextResponse.json(response);
   } catch (error) {
     if (error instanceof AuthorizationError) {

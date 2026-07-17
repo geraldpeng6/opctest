@@ -11,8 +11,8 @@ function weightedScore(score: number, durationSec: number) {
   return score * 100000 - durationSec;
 }
 
-export function getLeaderboards(): LeaderboardsResponse {
-  const finals = getAllFinalSubmissions();
+export async function getLeaderboards(): Promise<LeaderboardsResponse> {
+  const finals = await getAllFinalSubmissions();
 
   const byLevel = Object.fromEntries(
     LEVELS.map((level) => {
