@@ -11,9 +11,6 @@
     "test": "node --import tsx --test"
   },
   "dependencies": {
-    "@fontsource/noto-sans-sc": "^5.2.9",
-    "@fontsource/noto-serif-sc": "^5.2.9",
-    "@fontsource/zcool-qingke-huangyou": "^5.2.8",
     "drizzle-orm": "0.45.2",
     "next": "16.2.6",
     "react": "19.2.6",
